@@ -23,7 +23,7 @@ const CreateAccountForm = ({
       <Tabs defaultValue="customer">
         <TabsList>
           <TabsTrigger value="customer">Customer</TabsTrigger>
-          <TabsTrigger value="provider">Provider</TabsTrigger>
+          <TabsTrigger value="provider">Provider Test</TabsTrigger>
         </TabsList>
         <TabsContent value="customer">
           <Card className="overflow-hidden p-0">
