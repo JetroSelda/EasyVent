@@ -5,9 +5,20 @@
   $response = new stdClass();
 
   $query = "
-    SELECT servc.*
-    FROM services_tbl servc
-    WHERE servc.status = 'Published'
+    SELECT 
+      s.*, 
+      CONCAT('[', 
+          IFNULL(GROUP_CONCAT(JSON_OBJECT('comment', c.comment, 'rating', c.rating) ORDER BY c.id), ''), 
+      ']') AS comments
+    FROM 
+        services_tbl s
+    LEFT JOIN 
+        comments_tbl c ON s.id = c.id_service
+    WHERE s.status = 'Published'
+    GROUP BY 
+        s.id
+    ORDER BY 
+        s.id;
   ";
 
   $statement = $connect->prepare($query);

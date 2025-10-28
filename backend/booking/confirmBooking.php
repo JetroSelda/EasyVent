@@ -22,6 +22,19 @@
   $statement = $connect->prepare($mutate);
   $statement->execute();
 
+  /* Creating Notif */
+
+  $mutate = "
+    INSERT INTO `notifications_tbl`
+    (`id_user`, `id_ref`, `title`, `description`, `status`)
+    VALUES ($user2Id, $id, 'Confirmed Booking', 'Your booking has been confirmed.', 'Unread')
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
+
+  /* Creating Notif [END] */
+
   $query = "
     INSERT INTO `conversations_tbl`
       (`id_user1`, `id_user2`, `user1_name`, `user2_name`, `user1_image`, `user2_image`)
@@ -49,6 +62,15 @@
   $response->data = new stdClass();
   $response->data->title = "Booking Confirmation";
   $response->data->message = "Successfully confirmed booking request.";
+
+  $mutate = "
+    INSERT INTO `logs_tbl`
+      (`title`, `description`, `role`, `id_author`)
+    VALUES ('Confirmed Booking','Confirmed booking for customer $user2Name','Provider','$user1Id')
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
 
   print_r(json_encode($response));
 

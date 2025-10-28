@@ -15,6 +15,7 @@
   $email = $_POST["email"];
   $role = $_POST["role"];
   $reference = hash('sha256', $email);
+  $userId = $_POST["userId"];
 
   // Check if email existing already
   $query = "
@@ -48,6 +49,15 @@
 
   $lastId = $connect->lastInsertId();
 
+  $mutate = "
+    INSERT INTO `logs_tbl`
+      (`title`, `description`, `role`, `id_author`)
+    VALUES ('Invited User','Invited a new user $email','Admin','$userId')
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
+
   $tomorrow = new DateTime('tomorrow');
   $today = new DateTime();
   $expiration = $tomorrow->format('Y-m-d');
@@ -72,7 +82,7 @@
       $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
       $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
       $mail->Username   = 'alicred08@gmail.com';                     //SMTP username
-      $mail->Password   = '';                               //SMTP password
+      $mail->Password   = 'fuca jfts pgzr dlif';                               //SMTP password
       $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
       $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
@@ -171,7 +181,7 @@
                       
                       <!-- Action Button -->
                       <p>
-                          <a style="color: white" href="http://localhost:5173/invitation?ref='.$reference.'" class="button" target="_blank">Join the Team</a>
+                          <a style="color: white" href="https://easyvent.iceiy.com/invitation?ref='.$reference.'" class="button" target="_blank">Join the Team</a>
                       </p>
                   </div>
 

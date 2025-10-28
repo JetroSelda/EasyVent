@@ -17,7 +17,10 @@
       customer.display_picture,
       customer.contacts,
       customer.id as 'id_customer',
-      bookings.reason
+      bookings.reason,
+      bookings.schedule,
+      bookings.payment_method,
+      bookings.payment_receipt
     FROM `bookings_tbl` bookings, `users_tbl` customer
     WHERE bookings.id_service = $serviceId AND customer.id = bookings.id_user
   ";

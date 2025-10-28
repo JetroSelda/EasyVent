@@ -11,11 +11,15 @@
       bookings.id,
       bookings.package_item,
       bookings.status,
+      bookings.reason,
       servc.property_name,
       bookings.created_at,
       usert.contacts,
       usert.email,
-      usert.display_picture
+      usert.display_picture,
+      bookings.schedule,
+      servc.id as 'id_service',
+      usert.payments as 'payment_methods'
     FROM `bookings_tbl` bookings, `services_tbl` servc, user_providers_tbl userp, users_tbl usert
     WHERE bookings.id_user = $userId AND servc.id = bookings.id_service AND servc.id = userp.id_service AND userp.id_user = usert.id
   ";

@@ -6,6 +6,8 @@
   $password = $_POST["password"];
   $role = $_POST["role"];
 
+  $status = $role === "Provider" ? "Pending" : "Active";
+
   $hash = password_hash($password, PASSWORD_DEFAULT);
 
   // Check if email existing already
@@ -32,7 +34,7 @@
   $mutate = "
     INSERT INTO `users_tbl`
     (`email`, `password`, `status`, `role`)
-    VALUES ('$email','$hash','Active','$role')
+    VALUES ('$email','$hash','$status','$role')
   ";
 
   $statement = $connect->prepare($mutate);

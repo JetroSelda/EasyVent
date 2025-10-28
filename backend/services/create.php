@@ -13,6 +13,7 @@
   $location = addslashes($_POST["location"]);
   $packages_list = addslashes($_POST["packages_list"]);
   $required_documents = addslashes($_POST["required_documents"]);
+  $availability = addslashes($_POST["availability"]);
   
   $skills = addslashes($_POST["skills"]);
   $experiences = addslashes($_POST["experiences"]);
@@ -20,8 +21,8 @@
 
   $mutate = "
     INSERT INTO `services_tbl`
-    (`category`, `property_name`, `property_description`, `images_url`, `highlights`, `amenities`, `location`, `packages_list`, `status`, `skills`, `experiences`, `independent_locations`, `required_documents`)
-    VALUES ('$category','$property_name','$property_description','$images_url','$highlights','$amenities','$location','$packages_list','$status','$skills', '$experiences', '$independent_locations', '$required_documents')
+    (`category`, `property_name`, `property_description`, `images_url`, `highlights`, `amenities`, `location`, `packages_list`, `status`, `skills`, `experiences`, `independent_locations`, `required_documents`, `availability`)
+    VALUES ('$category','$property_name','$property_description','$images_url','$highlights','$amenities','$location','$packages_list','$status','$skills', '$experiences', '$independent_locations', '$required_documents', '$availability')
   ";
 
   $statement = $connect->prepare($mutate);
@@ -38,6 +39,30 @@
     INSERT INTO `user_providers_tbl`
     (`id_user`, `id_service`, `role`, `status`)
     VALUES ('$userId','$lastId','Admin','Active')
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
+
+  /* Creating Notif [START] */
+
+  if ($status === "Verification") {
+    $mutate = "
+      INSERT INTO `notifications_tbl`
+      (`user_type`, `id_ref`, `title`, `description`, `status`)
+      VALUES ('Admin', $lastId, 'New Listing', '$property_name has request for listing', 'Unread')
+    ";
+
+    $statement = $connect->prepare($mutate);
+    $statement->execute();
+  }
+
+  /* Creating Notif [END] */
+
+  $mutate = "
+    INSERT INTO `logs_tbl`
+      (`title`, `description`, `role`, `id_author`)
+    VALUES ('Created Service','Created new $property_name $category service','Provider','$userId')
   ";
 
   $statement = $connect->prepare($mutate);

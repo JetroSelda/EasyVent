@@ -1,0 +1,27 @@
+.editor-container {
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  background-color: #fff;
+  overflow: hidden
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+button.is-active {
+  background-color: #d4edda;
+  border-color: #28a745;
+}
+
+.editor-container .ProseMirror {
+  padding: 10px;
+  min-height: 200px;
+  border-radius: 4px;
+  background-color: white;
+  outline: none !important;
+}

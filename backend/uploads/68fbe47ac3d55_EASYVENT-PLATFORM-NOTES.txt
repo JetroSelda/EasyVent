@@ -1,0 +1,25 @@
+EASYVENT PLATFORM
+
+- Mobile Responsiveness
+- Admin nav - change into "Users", and filter out users list by tab
+- Separate customer, provider & dashboard
+- Reject Booking
+- OTP verification for create account
+- Notifications
+- Invoice For customer
+- Click events animation
+- Check initial message on confirm booking
+- Check messages state request asynchronous
+- Admin Dashboard
+  - Trending services/provider
+  - Total Customer
+  - Total Provider
+  - Remove access for providers and bookings & calendar summary
+  - Invite user - incorrect url
+
+- Provider Dashboard
+ - Calendar manual date input
+ - Welcome message customize
+ - Feedback, check form and moved into messages tab
+ - Create UX - create account - profile update - service requirement
+

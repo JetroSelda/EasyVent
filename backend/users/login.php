@@ -42,6 +42,7 @@
     $response->data->email = $row["email"];
     $response->data->date_of_birth = $row["date_of_birth"];
     $response->data->status = $row["status"];
+    $response->data->payments = $row["payments"];
 
     print_r(json_encode($response));
     die;

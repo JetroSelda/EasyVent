@@ -53,6 +53,8 @@
   $contacts = $_POST["contacts"];
   $date_of_birth = $_POST["date_of_birth"];
   $bio = $_POST["bio"];
+  $payments = isset($_POST["payments"]) ? $_POST["payments"] : "[]";
+  $status = isset($_POST["status"]) ? $_POST["status"] : "Active";
 
   // Check if email existing already
   $query = "
@@ -83,6 +85,8 @@
       `last_name`='$last_name',
       `bio`='$bio',
       `date_of_birth`='$date_of_birth',
+      `payments`='$payments',
+      `status`='$status',
       `contacts`='$contacts' $photoQuery
     WHERE id = $id
   ";

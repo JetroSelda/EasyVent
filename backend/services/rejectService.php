@@ -32,6 +32,54 @@
   $response->data->message = "Successfully updated service.";
   $response->data->id = $id;
 
+  /* Creating Notif */
+
+  $query = "
+    SELECT userptbl.id_user, servctbl.property_name
+    FROM services_tbl servctbl, user_providers_tbl userptbl
+    WHERE servctbl.id = $id AND servctbl.id = userptbl.id_service
+  ";
+
+  $statement = $connect->prepare($query);
+  $statement->execute();
+
+  $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+  $providerId = $row["id_user"];
+  $providerProperty = addslashes($row["property_name"]);
+
+  $mutate = "
+    INSERT INTO `notifications_tbl`
+    (`id_user`, `id_ref`, `title`, `description`, `status`)
+    VALUES ($providerId, $id, 'Rejected Listing', '$providerProperty has been rejected.', 'Unread')
+  ";
+
+  /* Creating Notif [END] */
+
+  /* Check if initial listing */
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
+
+  $query = "
+    SELECT * FROM users_tbl WHERE id = $providerId
+  ";
+
+  $statement = $connect->prepare($query);
+  $statement->execute();
+  $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+  if ($row["status"] === "Verification") {
+    $mutate = "
+        UPDATE users_tbl
+        SET `status`='Pending'
+        WHERE id = $providerId
+    ";
+
+    $statement = $connect->prepare($mutate);
+    $statement->execute();
+  }
+
   $mail = new PHPMailer(true);
 
   try {
@@ -40,7 +88,7 @@
       $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
       $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
       $mail->Username   = 'alicred08@gmail.com';                     //SMTP username
-      $mail->Password   = '';                               //SMTP password
+      $mail->Password   = 'fuca jfts pgzr dlif';                               //SMTP password
       $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
       $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
@@ -139,7 +187,7 @@
                       
                       <!-- Action Button -->
                       <p>
-                          <a style="color: white" href="http://localhost:5173/dashboard" class="button" target="_blank">Go to Dashboard</a>
+                          <a style="color: white" href="https://easyvent.iceiy.com/dashboard" class="button" target="_blank">Go to Dashboard</a>
                       </p>
                   </div>
 
