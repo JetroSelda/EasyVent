@@ -115,9 +115,9 @@ const PropertyImages = ({ defaultValues = [], updateFormState, title = "Property
               </Label>
             </div>
 
-            <div className="grid grid-cols-3 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 items-start">
               {formattedUrls.map((file, index) => (
-                <div className="w-[12rem] mr-4 mb-3 shadow-sm border-1 rounded-md relative">
+                <div className="md:w-[12rem] mr-4 mb-3 shadow-sm border-1 rounded-md relative">
                   <div onClick={() => handleRemove(index)} className="bg-black flex items-center justify-center text-white absolute top-[-0.4rem] right-[-0.4rem] w-[1.2rem] h-[1.2rem] rounded-full"><X size={15} /></div>
                   <div className="rounded-md overflow-hidden">
                     <img src={file} />

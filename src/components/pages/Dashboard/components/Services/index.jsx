@@ -304,8 +304,8 @@ const Services = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <div className="flex gap-3">
-        <div className="relative w-[20rem]">
+      <div className="flex flex-col md:flex-row gap-3">
+        <div className="relative md:w-[20rem]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2 pointer-events-none" />
           <Input 
             type="search" 
@@ -319,8 +319,8 @@ const Services = () => {
         
         <CategoryFilter onSubmit={updateCategoryFilter} />
 
-        <div className="ml-auto">
-          <Button onClick={handleCreate} type="button" className="h-8 bg-[#183B4E] hover:bg-[#2e5e78]"><CalendarPlus />Create Service</Button>
+        <div className="ml-auto w-full md:w-auto">
+          <Button onClick={handleCreate} type="button" className="h-8 w-full md:w-auto bg-[#183B4E] hover:bg-[#2e5e78]"><CalendarPlus />Create Service</Button>
         </div>
       </div>
       

@@ -10,11 +10,11 @@ const Messages = () => {
   };
 
   return (
-    <div className="flex gap-4 p-4 pt-0 h-[80vh] overflow-hidden">
+    <div className="flex flex-col md:flex-row gap-4 p-4 pt-0 h-[80vh] overflow-hidden">
       <ChatMenu handleSelect={handleSelect} />
 
       {selectedChat && (
-        <ChatBox selectedChat={selectedChat} />
+        <ChatBox selectedChat={selectedChat} handleSelect={handleSelect} />
       )}
     </div>
   )

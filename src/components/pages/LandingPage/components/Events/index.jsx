@@ -5,9 +5,37 @@ import Slider from "../Slider";
 import { Banknote, ChevronsUpDown } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 
 const Events = ({ services = [] }) => {
   const [selectedTab, setSelectedTab] = useState("");
+  const [sortBy, setSortBy] = useState("");
+
+  const handleSort = (list, methodBy) => {
+    if (!methodBy) return list;
+
+    if (methodBy === "price") {
+      const copy = [...list];
+
+      copy.sort((a, b) => Number(a.lowestPrice) - Number(b.lowestPrice));
+
+      return copy;
+    }
+
+    if (methodBy === "rate") {
+      const copy = [...list];
+
+      copy.sort((a, b) => Number(a.rate) - Number(b.rate));
+
+      return copy;
+
+    }
+  }
 
   const { hotels = [], restaurants = [], functionHalls = [], indProviders = [] } = useMemo(() => {
     const hotelServc = [];
@@ -16,7 +44,11 @@ const Events = ({ services = [] }) => {
     const indProviderServc = [];
 
     services.forEach((service) => {
-      const { location, property_name, images_url, category, id, independent_locations = [], comments } = service;
+      const { location, property_name, images_url, category, id, independent_locations = [], comments, packages_list = [] } = service;
+
+      const cheapestItem = packages_list.reduce((lowest, item) => {
+        return Number(item.price) < Number(lowest.price) ? item : lowest
+      }, {});
 
       let reviewNo = 0;
       const totalRate = JSON.parse(comments ?? "[]").reduce((total, curr) => {
@@ -34,6 +66,7 @@ const Events = ({ services = [] }) => {
         name: property_name,
         rate: Math.floor(totalRate / reviewNo),
         reviewNo,
+        lowestPrice: cheapestItem?.price ?? 0,
         location: `${[street, barangay, city, province].filter(Boolean).join(", ")} ${zip_code}`,
         image: `${import.meta.env.VITE_API_URL}/uploads/${images_url[0]}`
       };
@@ -65,16 +98,28 @@ const Events = ({ services = [] }) => {
       }
     })
 
-    return { hotels: hotelServc, restaurants: restServc, functionHalls: funcServc, indProviders: indProviderServc };
-  }, [services])
+    return {
+      hotels: handleSort(hotelServc, sortBy),
+      restaurants: handleSort(restServc, sortBy),
+      functionHalls: handleSort(funcServc, sortBy),
+      indProviders: handleSort(indProviderServc, sortBy),
+    };
+  }, [services, sortBy])
   return (
     <div className="px-[1rem] md:px-[10rem]">
       <EventTabs updateEventTab={setSelectedTab} />
 
       <div className="relative">
         <div className="flex items-center gap-2 absolute top-5 right-0">
-          <Button variant="outline"><Banknote /> Price</Button>
-          <Button variant="outline"><ChevronsUpDown /> Sort By</Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline"><ChevronsUpDown /> Sort By</Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-60 overflow-auto p-0">
+              <p onClick={() => setSortBy("price")} className="p-4 py-3 border-b-1">Price</p>
+              <p onClick={() => setSortBy("rate")} className="p-4 py-3">Top Rated</p>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {(!selectedTab || selectedTab === "hotels") && (

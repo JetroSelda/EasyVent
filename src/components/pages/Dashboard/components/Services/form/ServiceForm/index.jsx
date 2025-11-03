@@ -16,6 +16,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import UnavailableDates from "./components/UnavailableDates";
+import { toast } from "sonner";
 
 const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
   const navigate = useNavigate();
@@ -174,6 +175,19 @@ const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
   };
 
   const handlePublish = () => {
+    const { property_name = "", property_description = "", skills = [], experiences = [] } = property_details;
+    if (!property_name) return toast("Missing Data", { description: "Missing Service Name" });
+    if (!property_description) return toast("Missing Data", { description: "Missing Service Description" });
+    if (category === "Independent Provider" && !skills?.length) return toast("Missing Data", { description: "Please add atleast 1 Skill" });
+
+    if (!images_url?.length || images_url.length < 3) return toast("Missing Data", { description: "Please add atleast 3 Image" });
+    if (category !== "Independent Provider" && !location?.province) return toast("Missing Data", { description: "Please add your service location" });
+    if (category !== "Independent Provider" && !location?.geocode) return toast("Missing Data", { description: "Please add your service pin location" });
+    if (category !== "Independent Provider" && !highlights?.length) return toast("Missing Data", { description: "Please add atleast 1 Highlights" });
+    if (category !== "Independent Provider" && !amenities?.length) return toast("Missing Data", { description: "Please add atleast 1 Amenities" });
+    if (category === "Independent Provider" && !independent_locations?.length) return toast("Missing Data", { description: "Please add atleast 1 covered location" });
+    
+    if (!packages_list?.length) return toast("Missing Data", { description: "Please add atleast 1 package item" });
     setEnabledDocuments(true);
   }
 
@@ -215,7 +229,7 @@ const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
 
   return (
     <div className="px-5">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between">
         <p className="font-poppins font-bold text-[1.5rem]">
           {category} Form
         </p>
@@ -239,8 +253,8 @@ const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
       )}
 
       {category !== "Independent Provider" && (
-        <div className="flex gap-5 py-3">
-          <div className="w-[60%] flex flex-col gap-5">
+        <div className="flex flex-col md:flex-row gap-5 py-3">
+          <div className="md:w-[60%] flex flex-col gap-5">
             <PropertyForm defaultValues={property_details} updateFormState={updateFormState} />
 
             <PropertyImages defaultValues={images_url} updateFormState={updateFormState} />
@@ -248,7 +262,7 @@ const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
             <HighlightsForm defaultValues={highlights} updateFormState={updateFormState} />
 
           </div>
-          <div className="w-[40%] flex flex-col gap-5">
+          <div className="md:w-[40%] flex flex-col gap-5">
             <LocationForm defaultValues={location} updateFormState={updateFormState} />
 
             <AmenitiesForm defaultValues={amenities} updateFormState={updateFormState} />

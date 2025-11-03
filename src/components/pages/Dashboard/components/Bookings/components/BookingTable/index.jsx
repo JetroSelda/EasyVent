@@ -170,8 +170,8 @@ const BookingForm = ({ defaultValue = {} }) => {
         <DialogTitle>My Booking</DialogTitle>
       </DialogHeader>
       <div className="grid gap-3 pt-5">
-        <div className="flex gap-3 pb-5">
-          <div className="w-[35%]">
+        <div className="flex flex-col md:flex-row gap-3 pb-5">
+          <div className="md:w-[35%]">
             <Card className="rounded-sm p-0 overflow-hidden">
               <CardContent className="p-0 relative overflow-hidden">
                 <div className="h-[7rem] w-full absolute top-0 left-0 bg-blue-300" />
@@ -208,7 +208,7 @@ const BookingForm = ({ defaultValue = {} }) => {
 
             {defaultValue.status !== "Pending" && <FeedbackForm defaultValue={defaultValue} />}
           </div>
-          <div className="w-[60%]">
+          <div className="md:w-[60%]">
             {status === "Rejected" && (
               <Card className="rounded-sm mb-3">
                 <CardContent>

@@ -239,8 +239,8 @@ const ServiceVerify = () => {
 
   
   return (
-    <div className="flex relative px-5">
-      <div className="w-[35%]">
+    <div className="flex flex-col md:flex-row relative px-5">
+      <div className="md:w-[35%]">
         <div className="">
           <Card className="py-0 bg-gray-400 h-[18rem] rounded-md overflow-hidden">
           <CardContent className="px-0 h-full">
@@ -296,7 +296,7 @@ const ServiceVerify = () => {
         </div>
       </div>
 
-      <div className="w-[65%] px-5">
+      <div className="md:w-[65%] px-5">
         <div className="flex justify-between mb-4">
           <div className="flex flex-col justify-between">
             <p className="font-title font-bold text-[2rem] mb-1">{property_name}</p>
@@ -364,7 +364,7 @@ const ServiceVerify = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col md:flex-row gap-3 pt-2">
             { status === "Verification" && (
               <Button disabled={isLoading} onClick={() => setRejectingForm(true)} variant="destructive"><CircleOff /> Reject Service</Button>
             )}

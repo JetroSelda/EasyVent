@@ -52,9 +52,9 @@ const ContactPage = () => {
     <div className="w-[100vw] h-[100vh] overflow-y-auto overflow-x-hidden relative">
       <NavigationMenu />
 
-      <div className="px-[15rem] pt-[3rem]">
-        <div className="flex">
-          <div className="w-[40%]">
+      <div className="px-3 md:px-[15rem] pt-[3rem]">
+        <div className="flex gap-5 md:gap-0 flex-col md:flex-row">
+          <div className="md:w-[40%]">
             <p className="font-title font-bold mb-[1rem] text-[1.5rem]">Contact Our Team</p>
 
             <p className="text-[1.3rem] mb-5">
@@ -70,13 +70,13 @@ const ContactPage = () => {
             </p>
           </div>
 
-          <div className="w-[60%] pl-[5rem]">
+          <div className="md:w-[60%] md:pl-[5rem]">
             <Card className="py-6 shadow-sm">
               <CardContent>
                 <p className="font-title font-bold mb-[1rem] text-[1.5rem]">Feedback Form</p>
 
                 <form className="grid gap-4" onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid md:grid-cols-2 gap-5">
                     <div className="grid gap-2">
                       <Label>Personal Name</Label>
                       <Input disabled={isLoading} value={personal_name} onChange={(event) => handleChange(event.target.value, "personal_name")} required />

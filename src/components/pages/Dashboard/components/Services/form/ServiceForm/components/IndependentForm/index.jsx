@@ -144,13 +144,13 @@ const IndependentForm = ({ formState = {}, updateFormState }) => {
   const { images_url = [], property_details = {}, independent_locations = [], packages_list = [] } = formState;
 
   return (
-    <div className="flex gap-5 py-3">
-      <div className="w-[60%] flex flex-col gap-5">
+    <div className="flex flex-col md:flex-row gap-5 py-3">
+      <div className="md:w-[60%] flex flex-col gap-5">
         <IndependentProfileForm defaultValues={property_details} updateFormState={updateFormState} />
 
         <PropertyImages title="Service" defaultValues={images_url} updateFormState={updateFormState} />
       </div>
-      <div className="w-[40%] flex flex-col gap-5">
+      <div className="md:w-[40%] flex flex-col gap-5">
         <IndependentLocations defaultValues={independent_locations} updateFormState={updateFormState} />
 
         <IndependentPackages defaultValues={packages_list} updateFormState={updateFormState} />

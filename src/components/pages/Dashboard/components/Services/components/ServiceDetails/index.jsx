@@ -77,10 +77,10 @@ const ServiceDetails = () => {
 
   
   return (
-    <div className="flex relative px-5">
-      <div className="w-[35%]">
+    <div className="flex flex-col md:flex-row relative px-5">
+      <div className="md:w-[35%]">
         <div className="">
-          <Card className="py-0 bg-gray-400 h-[18rem] rounded-md overflow-hidden">
+          <Card className="hidden md:block py-0 bg-gray-400 h-[18rem] rounded-md overflow-hidden">
           <CardContent className="px-0 h-full">
             <img className="w-full h-full" src={`${import.meta.env.VITE_API_URL}/uploads/${selectedUrl}`} />
           </CardContent>
@@ -94,8 +94,8 @@ const ServiceDetails = () => {
           >
             <CarouselContent>
               {images_url.map((item, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/2">
-                  <Card className="py-0 bg-gray-400 h-[8rem] rounded-md overflow-hidden" onClick={() => setSelectedImageIndx(index)}>
+                <CarouselItem key={index} className="basis-1/1 md:basis-1/2 lg:basis-1/2">
+                  <Card className="py-0 bg-gray-400 h-[18rem] md:h-[8rem] rounded-md overflow-hidden" onClick={() => setSelectedImageIndx(index)}>
                     <CardContent className="px-0 h-full">
                       <img className="w-full h-full" src={`${import.meta.env.VITE_API_URL}/uploads/${item}`} />
                     </CardContent>
@@ -122,7 +122,7 @@ const ServiceDetails = () => {
                     <FileInput size={28} />
                   </div>
 
-                  <p className="w-[20rem]">
+                  <p className="md:w-[20rem]">
                     <h4 className="font-semibold w-[90%] text-nowrap text-ellipsis overflow-hidden">{doc.name}</h4>
                     <p className="text-gray-500 text-[0.9rem] w-[90%] text-nowrap text-ellipsis overflow-hidden">{doc.type} file</p>
                   </p>
@@ -134,7 +134,7 @@ const ServiceDetails = () => {
         </div>
       </div>
 
-      <div className="w-[65%] px-5">
+      <div className="md:w-[65%] px-5">
         <div className="flex justify-between mb-4">
           <div className="flex flex-col justify-between">
             <p className="font-title font-bold text-[2rem] mb-1">{property_name}</p>

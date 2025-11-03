@@ -104,8 +104,8 @@ const LandingSettings = ({ settings = {}, refresh }) => {
           }
         </div>
 
-        <div className="flex gap-10">
-          <div className="w-[50%]">
+        <div className="flex flex-col md:flex-row gap-10">
+          <div className="md:w-[50%]">
             <div className="py-3 grid gap-2">
               <Label>Title</Label>
               <Input value={currState.landing_title} disabled={isLoading || !enabledForm} onChange={(event) => handleChange(event, "landing_title")} />
@@ -115,7 +115,7 @@ const LandingSettings = ({ settings = {}, refresh }) => {
               <Textarea value={currState.landing_description} disabled={isLoading || !enabledForm} onChange={(event) => handleChange(event, "landing_description")} />
             </div>
           </div>
-          <div className="w-[50%]">
+          <div className="md:w-[50%]">
             <div className="w-full h-[30rem] border-1 overflow-hidden">
               <Input onChange={handleUpload} type="file" accept=".png, .jpg, .jpeg"  ref={uploadRef} className="hidden" />
 

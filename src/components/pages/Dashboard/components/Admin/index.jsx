@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Spinner } from "@/components/ui/spinner";
+
 const InvitationForm = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("Staff");
@@ -99,9 +101,11 @@ const InvitationForm = ({ onClose }) => {
       </div>
       <DialogFooter>
         <DialogClose asChild>
-          <Button type="button" variant="outline">Cancel</Button>
+          <Button disabled={isLoading} type="button" variant="outline">Cancel</Button>
         </DialogClose>
-        <Button type="submit" onClick={() => formRef.current.requestSubmit()}><Mail /> Send Invitation</Button>
+        <Button disabled={isLoading} type="submit" onClick={() => formRef.current.requestSubmit()}>
+          {isLoading ? <Spinner /> : <Mail />} Send Invitation
+        </Button>
       </DialogFooter>
   </form>
   )

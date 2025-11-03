@@ -45,15 +45,15 @@
   try {
       //Server settings
       $mail->isSMTP();                                            //Send using SMTP
-      $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+      $mail->Host       = 'smtp.hostinger.com';                     //Set the SMTP server to send through
       $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-      $mail->Username   = 'alicred08@gmail.com';                     //SMTP username
-      $mail->Password   = 'fuca jfts pgzr dlif';                               //SMTP password
+      $mail->Username   = 'admin@easyvent.shop';                     //SMTP username
+      $mail->Password   = 'EasyVent2025!!';                               //SMTP password
       $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
       $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
       //Recipients
-      $mail->setFrom('alicred08@gmail.com', 'EasyVent Platform');
+      $mail->setFrom('admin@easyvent.shop', 'EasyVent Platform');
       $mail->addAddress($email, "");
 
       // //Content
@@ -152,7 +152,7 @@
 
                     <!-- Footer -->
                     <div class="footer">
-                        <p>If you have any questions or need assistance, feel free to reach out to our support team at <a href="mailto:support@easyvent.com">support@easyvent.com</a>.</p>
+                        <p>If you have any questions or need assistance, feel free to reach out to our support team at <a href="mailto:admin@easyvent.shop">admin@easyvent.shop</a>.</p>
                     </div>
                 </div>
             </body>

@@ -52,7 +52,7 @@ const ChatBox = () => {
 
   return (
     <div className="absolute bottom-[100%] right-[1rem]">
-      <div className="flex flex-col relative justify-end overflow-hidden max-w-lg w-[25rem] h-[30rem] bg-white rounded-lg shadow-lg border border-gray-300">
+      <div className="flex flex-col relative justify-end overflow-hidden max-w-lg w-[95vw] md:w-[25rem] h-[30rem] bg-white rounded-lg shadow-lg border border-gray-300">
         <div className="w-full h-[3rem] bg-[#183B4E] flex items-center pl-4">
           Chat Support (FAQs)
         </div>

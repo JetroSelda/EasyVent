@@ -66,8 +66,8 @@ const BookingForm = ({ defaultValue = {} }) => {
         <DialogTitle>Booking</DialogTitle>
       </DialogHeader>
       <div className="grid gap-3 pt-5">
-        <div className="flex gap-3 pb-5">
-          <div className="w-[35%]">
+        <div className="flex gap-3 pb-5 flex-col md:flex-row">
+          <div className="md:w-[35%]">
             <Card className="rounded-sm p-0 overflow-hidden">
               <CardContent className="p-0 relative overflow-hidden">
                 <div className="h-[7rem] w-full absolute top-0 left-0 bg-blue-300" />
@@ -102,7 +102,7 @@ const BookingForm = ({ defaultValue = {} }) => {
               </CardContent>
             </Card>
           </div>
-          <div className="w-[60%]">
+          <div className="md:w-[60%]">
             {status === "Rejected" && (
               <Card className="rounded-sm mb-3">
                 <CardContent>
@@ -185,12 +185,16 @@ const BookingForm = ({ defaultValue = {} }) => {
 const RejectBookingForm = ({ defaultValue = {}, refetch }) => {
   console.log("Default Value", defaultValue);
   const [reason, setReason] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const formRef = useRef();
   const cancelRef = useRef();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
+
+    if (isLoading) return;
+    setIsLoading(true);
 
     const formData = new FormData();
 
@@ -210,6 +214,7 @@ const RejectBookingForm = ({ defaultValue = {}, refetch }) => {
       .then(({ data }) => {
         toast(data.title, { description: data.message });
         refetch();
+        setIsLoading(false);
         cancelRef.current.click();
       });
   }
@@ -228,9 +233,11 @@ const RejectBookingForm = ({ defaultValue = {}, refetch }) => {
       </div>
       <DialogFooter>
         <DialogClose asChild>
-          <Button type="button" variant="outline" ref={cancelRef}>Cancel</Button>
+          <Button disabled={isLoading} type="button" variant="outline" ref={cancelRef}>Cancel</Button>
         </DialogClose>
-        <Button type="submit" variant="destructive" onClick={() => formRef.current.requestSubmit()}>Reject Booking</Button>
+        <Button disabled={isLoading} type="submit" variant="destructive" onClick={() => formRef.current.requestSubmit()}>
+          {isLoading && <Spinner />} Reject Booking
+        </Button>
       </DialogFooter>
   </form>
   )
@@ -363,6 +370,7 @@ const Bookings = ({ service = {} }) => {
   const [selectedBooking, setSelectedBooking] = useState();
   const [rejectingBooking, setRejectingBooking] = useState();
   const [paymentState, setPaymentState] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchBookingList = () => {
     if (!service.id) return;
@@ -392,6 +400,8 @@ const Bookings = ({ service = {} }) => {
   }
 
   const bookingConfirmation = (selected) => {
+    if (isLoading) return;
+    setIsLoading(true);
     const formData = new FormData();
 
     formData.append("id", selected.id);
@@ -417,6 +427,7 @@ const Bookings = ({ service = {} }) => {
       .then(({ data }) => {
         toast(data.title, { description: data.message });
         fetchBookingList();
+        setIsLoading(false);
       });
   }
   
@@ -471,7 +482,7 @@ const Bookings = ({ service = {} }) => {
                                     bookingConfirmation(booking);
                                   }}
                                 >
-                                  Confirm Booking
+                                  {isLoading && <Spinner />} Confirm Booking
                                 </CommandItem>
                               )}
 

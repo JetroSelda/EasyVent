@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Search } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -79,7 +79,7 @@ const FeedbackPage = () => {
         <CardContent className="px-0 h-full">
           <div className="flex h-full">
             
-            <div className="min-w-[25rem] max-w-[25rem] border-r-1 flex flex-col h-full">
+            <div className={`${selectedItem ? `hidden md:flex` : ``}md:min-w-[25rem] md:max-w-[25rem] border-r-1 flex-col h-full`}>
 
               <div className="p-5 border-b-1">Inbox</div>
 
@@ -123,8 +123,11 @@ const FeedbackPage = () => {
               {selectedItem && (
                   <div className="flex flex-col border-b-1">
 
-                  <div className="flex items-start p-4">
+                  <div className="flex items-start flex-col md:flex-row p-4">
                     <div className="flex items-start gap-4 text-md">
+                      <div onClick={() => setSelectedItem(null)}>
+                        <ArrowLeft />
+                      </div>
                       <Avatar>
                         <AvatarFallback>{selectedItem.name[0]}</AvatarFallback>
                       </Avatar>
@@ -132,7 +135,7 @@ const FeedbackPage = () => {
                       <div className="grid gap-1">
                         <div className="font-semibold">{selectedItem.name}</div>
                         <div className="line-clamp-1 text-md">{selectedItem.title}</div>
-                        <div className="line-clamp-1 text-md">
+                        <div className="md:line-clamp-1 text-md">
                           Reply-To: {selectedItem.email}
                         </div>
                       </div>

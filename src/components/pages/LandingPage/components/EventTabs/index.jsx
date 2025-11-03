@@ -16,7 +16,28 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const EventTabs = ({ updateEventTab }) => {
+  const [bookmark, setBookmark] = useState([]);
+  const navigate = useNavigate();
+
+  const handleNavigate = (item) => {
+    navigate("/servicehotel", { state: { id: item.id } })
+  };
+
+  useEffect(() => {
+    const bmData = localStorage.getItem("bookmark");
+    const bmParsed = JSON.parse(bmData ?? "[]");
+
+    setBookmark(bmParsed);
+  }, []);
   return (
     <div className="p-2 md:p-10">
       <Card className="py-2">
@@ -49,7 +70,19 @@ const EventTabs = ({ updateEventTab }) => {
             </div>
 
             <div className="flex grow justify-end cursor-pointer">
-              <Bookmark fill="orange" />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Bookmark fill="#dda853" />
+                </PopoverTrigger>
+                <PopoverContent className="w-60 overflow-auto p-0">
+                  {bookmark.map((bm) => (
+                    <div onClick={() => handleNavigate(bm)} className="py-3 px-4 hover:bg-gray-100 cursor-pointer border-b-1">
+                      <h3 className="font-semibold text-xl">{bm.name}</h3>
+                      <p>{bm.category}</p>
+                    </div>
+                  ))}
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </CardContent>

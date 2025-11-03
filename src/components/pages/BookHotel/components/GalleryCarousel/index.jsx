@@ -8,13 +8,13 @@ import {
 
 const GalleryCarousel = ({ images = [], selectedImage = 0, setSelectedImage}) => {
   return (
-    <div onClick={() => setSelectedImage(null)} className="py-[2rem] px-[10rem] fixed w-[100vw] h-[100vh] bg-[#000000AA] backdrop-blur-xs z-[1001] top-0 left-0">
-      <div className="flex flex-col w-full h-full" onClick={(event) => event.stopPropagation()}>
+    <div onClick={() => setSelectedImage(null)} className="py-[2rem] md:px-[10rem] fixed w-[100vw] h-[100vh] bg-[#000000AA] backdrop-blur-xs z-[1001] top-0 left-0">
+      <div className="flex flex-col w-full h-full">
         <div className="p-5 h-[75%] px-10 flex justify-center">
           <img src={images[selectedImage]} alt="" className="w-auto h-full" />
         </div>
 
-        <div className="px-[4rem]">
+        <div className="px-[4rem]" onClick={(event) => event.stopPropagation()}>
           <Carousel
             opts={{
               align: "start",

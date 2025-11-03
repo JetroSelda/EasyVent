@@ -172,7 +172,7 @@ const Profile = () => {
   if (!profileState) return null;
 
   return (
-    <div className="flex items-start flex-1 gap-4 p-4 pt-0">
+    <div className="flex flex-col md:flex-row items-start flex-1 gap-4 p-4 pt-0">
       <ProfileForm
         isProvider={profileState.role === "Provider"}
         isCustomer={profileState.role === "Customer"}

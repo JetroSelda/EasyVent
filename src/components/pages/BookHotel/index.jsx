@@ -255,6 +255,7 @@ const BookHotel = () => {
   const { state = {} } = useLocation();
   const [serviceState, setServiceState] = useState({});
   const [userData, setUserData] = useState(null);
+  const [bookmark, setBookmark] = useState([]);
 
   const [enabledPackages, setEnabledPackages] = useState(false);
 
@@ -288,13 +289,37 @@ const BookHotel = () => {
     navigate("/login", { state: { redirect: { page: "/serviceHotel", state: { id: state.id } }}})
   };
 
+  const handleBookmark = () => {
+    const bookmarkData = localStorage.getItem("bookmark");
+    const bookmarkParsed = JSON.parse(bookmarkData ?? "[]");
+
+    const currIndx = bookmarkParsed.findIndex((item) => item.id === id);
+
+    if (currIndx !== -1) {
+      const updated = bookmarkParsed.filter((item) => item.id !== id);
+
+      localStorage.setItem("bookmark", JSON.stringify(updated));
+      setBookmark(updated);
+      return;
+    }
+
+    const updated = [...bookmarkParsed, { id, name: property_name, category: serviceState.category }];
+
+    localStorage.setItem("bookmark", JSON.stringify(updated));
+    setBookmark(updated);
+  }
+
   useEffect(() => {
     const userData = localStorage.getItem("user-data");
+    const bookmark = localStorage.getItem("bookmark");
+    const parsedBm = JSON.parse(bookmark ?? "[]");
+
+    setBookmark(parsedBm);
 
     if (!userData) return;
 
     setUserData(JSON.parse(userData));
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (!state || !state.id) {
@@ -314,8 +339,8 @@ const BookHotel = () => {
             <CardContent>
               <GalleryGrid imagesUrl={urls} />
 
-              <div className="flex gap-5">
-                <div className="flex flex-col gap-5 w-[70%]">
+              <div className="flex flex-col md:flex-row gap-5">
+                <div className="flex flex-col gap-5 md:w-[70%]">
                   <div className="flex justify-between items-start">
                     <div className="flex flex-col gap-2">
                       <p className="font-title font-bold text-[1.3rem] text-[#183B4E]">{property_name}</p>
@@ -329,8 +354,8 @@ const BookHotel = () => {
                         <Star size={20} />
                         <Star size={20} />
                       </div>
-                      <Button variant="outline" className="rounded-full w-[2.3rem] h-[2.3rem] ml-5">
-                        <Heart />
+                      <Button variant="outline" type="button" onClick={handleBookmark} className="rounded-full w-[2.3rem] h-[2.3rem] ml-5">
+                        <Heart fill={bookmark.some((item) => item.id === id) ? "#ff6b6b" : "transparent"} />
                       </Button>
                     </div>
                   </div>
@@ -361,7 +386,7 @@ const BookHotel = () => {
                   </Card>
                 </div>
 
-                <div className="w-[30%]">
+                <div className="md:w-[30%]">
                   <div className="relative mb-5 h-[12rem] shadow-md border-1 rounded-sm overflow-hidden">
                     {geocode && <MapLocation name={property_name} rate={0} geocode={geocode} zoom={13} />}
 

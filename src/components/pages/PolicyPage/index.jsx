@@ -23,7 +23,7 @@ const PolicyPage = () => {
     <div className="w-[100vw] h-[100vh] overflow-y-auto overflow-x-hidden relative">
       <NavigationMenu />
 
-      <div className="px-[15rem] pt-[3rem]">
+      <div className="px-3 md:px-[15rem] pt-[3rem]">
         <Card className="py-6 shadow-sm">
           <CardContent className="px-6">
             <p className="font-title font-bold mb-[1rem] text-[1.5rem]">Privacy Policy</p>

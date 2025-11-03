@@ -16,8 +16,8 @@ const Details = ({ property_description = "", highlights = [], amenities = [], p
         </p>
 
         
-        <div className="flex gap-10">
-          <div className={amenities.length > 0 ? "w-[50%]" : ""}>
+        <div className="flex gap-10 flex-col md:flex-row">
+          <div className={amenities.length > 0 ? "md:w-[50%]" : ""}>
             <p className="font-semibold mb-3">
               Key Highlights
             </p>
@@ -37,7 +37,7 @@ const Details = ({ property_description = "", highlights = [], amenities = [], p
           </div>
 
           {amenities.length > 0 && (
-            <div className="w-[50%]">
+            <div className="md:w-[50%]">
               <p className="font-semibold mb-3">
                 Amenities
               </p>
@@ -99,7 +99,7 @@ const Details = ({ property_description = "", highlights = [], amenities = [], p
               {packageItem.meal_sets && (
                 <>
                   <p className="font-semibold mb-1">Meal Sets</p>
-                  <div className="grid grid-cols-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2">
                     {packageItem.meal_sets.map(({ title = "", meals = [] }) => (
                       <ul key={title}>
                         <li className="decoration">

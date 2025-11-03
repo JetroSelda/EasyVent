@@ -14,21 +14,34 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { useNavigate } from "react-router-dom";
 
-const SearchSection = ({ setSearchState, sortBy, setSortBy }) => {
+
+const SearchSection = ({ bookmark = [], setSearchState, sortBy, setSortBy }) => {
   const [dateRange, setDateRange] = useState();
   const [time, setTime] = useState();
   const [location, setLocation] = useState();
   const [pax, setPax] = useState();
 
+  const navigate = useNavigate();
+
   const submitSearch = () => {
     setSearchState({ date_range: dateRange, time, location, pax });
   }
 
+  const handleNavigate = (item) => {
+    navigate("/servicehotel", { state: { id: item.id } })
+  };
+
   return (
     <div className="border-b-1 px-2 md:px-[10rem] py-5">
-      <div className="flex gap-5 items-center">
-        <div className="relative w-[12rem]">
+      <div className="flex-col md:flex-row flex gap-5 md:items-center">
+        <div className="relative md:w-[12rem]">
           <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" />
           <Input
             type="search" 
@@ -40,7 +53,7 @@ const SearchSection = ({ setSearchState, sortBy, setSortBy }) => {
 
         <DateRangePicker defaultValue={dateRange} onChange={setDateRange} />
 
-        <div className="relative w-[8rem]">
+        <div className="relative md:w-[8rem]">
           <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" />
           <Input
             type="time"
@@ -52,8 +65,8 @@ const SearchSection = ({ setSearchState, sortBy, setSortBy }) => {
 
         <div className="relative">
           <Users className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" />
-          <Select className="w-[8rem]" onValueChange={(val) => setPax(val)}>
-            <SelectTrigger className="w-[12rem] pl-10">
+          <Select onValueChange={(val) => setPax(val)}>
+            <SelectTrigger className="w-full md:w-[12rem] pl-10">
               <SelectValue placeholder="Event Pax" />
             </SelectTrigger>
             <SelectContent>
@@ -72,13 +85,26 @@ const SearchSection = ({ setSearchState, sortBy, setSortBy }) => {
         <Button className="bg-[#183B4E]" onClick={submitSearch}>Search</Button>
       </div>
 
-      <div className="flex gap-5 items-center pt-5">
+      <div className="flex-col flex md:flex-row gap-5 md:items-center pt-5">
         <p className="font-bold">Sort by</p>
         <Button className={`${sortBy === "" ? "bg-[#dda853]" : "bg-[#27548a]"} hover:bg-[#dda853] px-10`} onClick={() => setSortBy("")}>Best Match</Button>
         <Button className={`${sortBy === "price" ? "bg-[#dda853]" : "bg-[#27548a]"} hover:bg-[#dda853] px-10`} onClick={() => setSortBy("price")}>Budget</Button>
         <Button className={`${sortBy === "rate" ? "bg-[#dda853]" : "bg-[#27548a]"} hover:bg-[#dda853] px-10`} onClick={() => setSortBy("rate")}>Top Rated</Button>
+        
 
-        <Bookmark fill="#dda853" />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Bookmark fill="#dda853" />
+          </PopoverTrigger>
+          <PopoverContent className="w-60 overflow-auto p-0">
+            {bookmark.map((bm) => (
+              <div onClick={() => handleNavigate(bm)} className="py-3 px-4 hover:bg-gray-100 cursor-pointer border-b-1">
+                <h3 className="font-semibold text-xl">{bm.name}</h3>
+                <p>{bm.category}</p>
+              </div>
+            ))}
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   )

@@ -22,7 +22,7 @@ export default function DateRangePicker({ defaultValue, onChange }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="h-9 w-[12rem] justify-start">
+        <Button variant="outline" className="h-9 md:w-[12rem] justify-start">
           <CalendarRangeIcon />
           {defaultValue?.from && defaultValue.to
             ? `${format(defaultValue.from, "MMM d")} – ${format(defaultValue.to, "MMM d yyyy")}`

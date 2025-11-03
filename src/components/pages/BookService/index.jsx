@@ -243,8 +243,8 @@ const BookService = () => {
     <div className="w-[100vw] h-[100vh] overflow-y-auto overflow-x-hidden relative">
       <NavigationMenu />
       
-      <div className="flex gap-5 py-6 px-2 md:px-[10rem]">
-        <div className="w-[30%]">
+      <div className="flex flex-col md:flex-row gap-5 py-6 px-2 md:px-[10rem]">
+        <div className="md:w-[30%]">
           <Card className="shadow-none mb-3">
             <CardContent>
               <div className="h-[15rem] overflow-hidden rounded-md shadow-md">
@@ -297,7 +297,7 @@ const BookService = () => {
           </div>
         </div>
 
-        <div className="w-[70%]">
+        <div className="md:w-[70%]">
           <Card  className="shadow-none mb-3">
             <CardContent>
               <div className="font-poppins font-semibold mb-3">

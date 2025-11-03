@@ -32,7 +32,11 @@ const SettingsPage = () => {
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <Tabs defaultValue={"landing"}>
         <div className="flex items-center justify-between">
-          <TabsList>
+          <TabsList className="
+          flex w-full overflow-x-auto
+          scrollbar-none
+          sm:overflow-visible
+        ">
             <TabsTrigger value="landing"><Wallpaper /> Landing Page</TabsTrigger>
             <TabsTrigger value="about"><BookOpen /> About</TabsTrigger>
             <TabsTrigger value="policy"><ShieldAlert /> Privacy Policy</TabsTrigger>

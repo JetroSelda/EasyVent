@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { formatISODate } from "../../../../../../../api/util";
+import { ArrowLeft } from "lucide-react";
 
 const SenderMessage = ({ message, created_at}) => {
   return (
@@ -36,7 +37,7 @@ const ReceiverMessage = ({ message, created_at}) => {
   )
 }
 
-const ChatBox = ({ selectedChat }) => {
+const ChatBox = ({ selectedChat, handleSelect }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -132,6 +133,9 @@ const ChatBox = ({ selectedChat }) => {
       <div className="bg-background fixed inset-0 z-50 flex h-full flex-col p-4 lg:relative lg:z-10 lg:bg-transparent lg:p-0">
         <div className="flex justify-between gap-4 lg:px-4">
           <div className="flex gap-4">
+            <div className="md:hidden" onClick={() => handleSelect(null)}>
+              <ArrowLeft />
+            </div>
             <Avatar className="relative flex size-8 shrink-0 rounded-full md:size-10">
               <AvatarImage src={`${import.meta.env.VITE_API_URL}/uploads/${selectedChat.image}`} />
               <AvatarFallback>CN</AvatarFallback>

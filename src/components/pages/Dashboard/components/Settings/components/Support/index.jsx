@@ -120,7 +120,7 @@ const SupportSettings = () => {
           }
         </div>
 
-        <div className="py-3 grid gap-10 w-[50%]">
+        <div className="py-3 grid gap-10 md:w-[50%]">
           
           {formState.map((item, index) => {
             if (item.status !== "Active") return null;

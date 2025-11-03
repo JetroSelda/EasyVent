@@ -83,7 +83,7 @@ const ChatMenu = ({ handleSelect }) => {
     initiateChats();
   }, []);
   return (
-    <Card className="p-0 shadow-none h-full w-[35%]">
+    <Card className="p-0 shadow-none h-full md:w-[35%]">
       <CardContent className="p-0 flex flex-col gap-5 h-full">
         <header className="font-bold text-[1.5rem] px-6 pt-4">Chats</header>
         <div className="px-6">

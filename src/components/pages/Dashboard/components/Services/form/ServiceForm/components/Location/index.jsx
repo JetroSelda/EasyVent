@@ -185,9 +185,9 @@ const LocationForm = ({ defaultValues = {}, updateFormState }) => {
       </CardContent>
 
       {enabledForm && (
-        <div onClick={() => setEnabledForm(false)} className="fixed top-0 left-0 w-[100vw] h-[100vh] px-[10rem] py-10 bg-[#000000AA] backdrop-blur-xs z-[20]">
-          <div onClick={(event) => event.stopPropagation()} className="h-full bg-white rounded-sm flex">
-            <div className="w-[30%] h-full py-5 px-5 overflow-auto">
+        <div onClick={() => setEnabledForm(false)} className="fixed top-0 left-0 w-[100vw] h-[100vh] px-3 md:px-[10rem] py-10 bg-[#000000AA] backdrop-blur-xs z-[20]">
+          <div onClick={(event) => event.stopPropagation()} className="h-full bg-white rounded-sm flex flex-col md:flex-row">
+            <div className="md:w-[30%] h-full py-5 px-5 overflow-auto">
               <p className="mb-1 font-semibold text-[1.2rem]">Location Form</p>
               <p className="mb-5 text-gray-500 text-[0.9rem]">Please fill in your address and navigate your pin location through the map.</p>
 
@@ -278,7 +278,7 @@ const LocationForm = ({ defaultValues = {}, updateFormState }) => {
                 <Button type="button" onClick={() => setEnabledForm(false)}>Save Location</Button>
               </form>
             </div>
-            <div className="w-[70%] h-full">
+            <div className="md:w-[70%] h-full">
               <MapLocationSelector onChange={handleGeocodeChange} geocode={geocode} />
             </div>
           </div>

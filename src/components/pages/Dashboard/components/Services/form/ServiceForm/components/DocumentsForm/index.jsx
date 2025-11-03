@@ -82,7 +82,7 @@ const DocumentsForm = ({ onSubmit }) => {
                 <FileInput size={28} />
               </div>
 
-              <p className="w-[15rem]">
+              <p className="md:w-[15rem]">
                 <h4 className="font-semibold w-[90%] text-nowrap text-ellipsis overflow-hidden">{doc.name}</h4>
                 <p className="text-gray-500 text-[0.9rem] w-[90%] text-nowrap text-ellipsis overflow-hidden">{doc.type} file</p>
               </p>

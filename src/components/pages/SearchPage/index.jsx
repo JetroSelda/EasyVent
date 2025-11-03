@@ -75,6 +75,7 @@ const SearchPage = () => {
   const [serviceTypes, setServiceTypes] = useState(["Hotel/Resort", "Restaurant", "Function Hall"]);
 
   const [servicesState, setServicesState] = useState([]);
+  const [bookmark, setBookmark] = useState([]);
   const maxPrices = [50000];
 
   const mappedServices = servicesState.map((item) => {
@@ -89,6 +90,8 @@ const SearchPage = () => {
 
       return total + curr.rating;
     }, 0);
+
+    const isLiked = bookmark.some((bm) => bm.id === item.id);
 
     const formattedLoc = [building_no, street, barangay, city, province].filter(Boolean).join(", ");
 
@@ -115,7 +118,8 @@ const SearchPage = () => {
       maxPrice,
       category: item.category,
       rate: Math.floor(totalRate / reviewNo),
-      reviewNo
+      reviewNo,
+      liked: isLiked,
     });
   });
 
@@ -128,8 +132,33 @@ const SearchPage = () => {
     setServicesState(list);
   }
 
+  const handleBookmark = (selected) => {
+    const bookmarkData = localStorage.getItem("bookmark");
+    const bookmarkParsed = JSON.parse(bookmarkData ?? "[]");
+
+    const currIndx = bookmarkParsed.findIndex((item) => item.id === selected.id);
+
+    if (currIndx !== -1) {
+      const updated = bookmarkParsed.filter((item) => item.id !== selected.id);
+
+      localStorage.setItem("bookmark", JSON.stringify(updated));
+      setBookmark(updated);
+      return;
+    }
+
+    const updated = [...bookmarkParsed, { id: selected.id, name: selected.name, category: selected.category }];
+
+    localStorage.setItem("bookmark", JSON.stringify(updated));
+    setBookmark(updated);
+  }
+
   useEffect(() => {
     initiateServices();
+
+    const bookmark = localStorage.getItem("bookmark");
+    const parsedBm = JSON.parse(bookmark ?? "[]");
+
+    setBookmark(parsedBm);
   }, []);
 
   const [sortBy, setSortBy] = useState("");
@@ -147,9 +176,9 @@ const SearchPage = () => {
     <div className="w-[100vw] h-[100vh] overflow-y-auto overflow-x-hidden relative">
       <NavigationMenu />
       
-      <SearchSection setSearchState={setSearchState} sortBy={sortBy} setSortBy={setSortBy} />
+      <SearchSection bookmark={bookmark} setSearchState={setSearchState} sortBy={sortBy} setSortBy={setSortBy} />
       <div className="flex gap-[1rem] px-2 md:px-[10rem]">
-        <EventCards list={[...sortedList]} />
+        <EventCards handleBookmark={handleBookmark} list={[...sortedList]} />
 
         <Filters toggleType={toggleType} serviceTypes={serviceTypes} maxPrice={Math.max(...maxPrices)} setNameFilter={setNameFilter} setMapEnabled={setMapEnabled} eventList={sortedList} setSearchState={setSearchState} />
       </div>
