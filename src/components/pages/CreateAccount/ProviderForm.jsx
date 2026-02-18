@@ -10,9 +10,13 @@ const ProviderForm = () => {
   const [userState, setUserState] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isOTPForm, setIsOTPForm] = useState(false);
+
+  const [correctOTP, setCorrectOTP] = useState("");
+
   const navigate = useNavigate();
 
-  const { email, password, confirm_password } = userState;
+  const { email, password, confirm_password, otp_code } = userState;
 
   const updateUser = (event, fieldName) => {
     const { value } = event.target;
@@ -23,10 +27,10 @@ const ProviderForm = () => {
   const onSubmit = (event) => {
     event.preventDefault();
 
-    if (password !== confirm_password) {
+    if (otp_code !== correctOTP) {
       // Throw Error
       toast("Validation Error", {
-        description: "Password did not match.",
+        description: "Invalid OTP code.",
       })
       return;
     }
@@ -63,8 +67,63 @@ const ProviderForm = () => {
       });
   }
 
+  const initOTPForm = async (event) => {
+    event.preventDefault();
+
+    if (password !== confirm_password) {
+      // Throw Error
+      toast("Validation Error", {
+        description: "Password did not match.",
+      })
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("email", email);
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/users/otp.php`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const json = await res.json();
+
+    const otp = json.data.code;
+
+    setCorrectOTP(otp);
+    setIsOTPForm(true);
+  }
+
+  if (isOTPForm) {
+    return (
+      <form className="p-6 md:p-8" onSubmit={onSubmit}>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-center text-center">
+            <h1 className="text-2xl font-bold">We have sent an OTP!</h1>
+            <p className="text-muted-foreground text-balance">
+              Please confirm you email address by providing the OTP code we send into your email.
+            </p>
+          </div>
+          <div className="grid gap-3">
+            <Label htmlFor="otp__code">OTP Code</Label>
+            <Input
+              id="otp__code"
+              type="text"
+              onChange={(event) => updateUser(event, "otp_code")}
+              required
+            />
+          </div>
+
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            Create Account
+          </Button>
+        </div>
+      </form>
+    )
+  }
+
   return (
-    <form className="p-6 md:p-8" onSubmit={onSubmit}>
+    <form className="p-6 md:p-8" onSubmit={initOTPForm}>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold">Get Started as Provider!</h1>
