@@ -11,7 +11,7 @@
       bookings.id,
       bookings.schedule
     FROM `bookings_tbl` bookings
-    WHERE bookings.id_service = $serviceId AND bookings.status IN ('Payment Verification', 'Confirmed', 'Paid', 'Completed');
+    WHERE bookings.id_service = $serviceId AND bookings.status IN ('Pending', 'Payment Verification', 'Confirmed', 'Paid', 'Completed');
   ";
 
   $statement = $connect->prepare($query);
