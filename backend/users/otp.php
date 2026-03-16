@@ -24,7 +24,7 @@
 
   $response = new stdClass();
 
-  if ($row !== false) {
+  if ($row === false) {
     // Initiate forgot password
     $otp = substr(bin2hex(random_bytes(3)), 0, 6);
 
@@ -32,133 +32,133 @@
 
     $mail = new PHPMailer(true);
 
-  try {
-      //Server settings
-      $mail->isSMTP();                                            //Send using SMTP
-      $mail->Host       = 'smtp.hostinger.com';                     //Set the SMTP server to send through
-      $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-      $mail->Username   = 'admin@easyvent.shop';                     //SMTP username
-      $mail->Password   = 'EasyVent2025!!';                               //SMTP password
-      $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
-      $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+    try {
+        //Server settings
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.hostinger.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'admin@easyvent.shop';                     //SMTP username
+        $mail->Password   = 'EasyVent2025!!';                               //SMTP password
+        $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
+        $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-      //Recipients
-      $mail->setFrom('admin@easyvent.shop', 'EasyVent Platform');
-      $mail->addAddress($email, "");
+        //Recipients
+        $mail->setFrom('admin@easyvent.shop', 'EasyVent Platform');
+        $mail->addAddress($email, "");
 
-      // //Content
-      $mail->isHTML(true);                                  //Set email format to HTML
-      $mail->Subject = "Forgot Password";
-      $mail->Body    = '
-        <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>OTP Verification Code</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        background-color: #f4f4f4;
-                    }
+        // //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = "Forgot Password";
+        $mail->Body    = '
+            <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>OTP Verification Code</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            background-color: #f4f4f4;
+                        }
 
-                    .email-container {
-                        width: 100%;
-                        max-width: 600px;
-                        margin: 0 auto;
-                        background-color: #ffffff;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                    }
+                        .email-container {
+                            width: 100%;
+                            max-width: 600px;
+                            margin: 0 auto;
+                            background-color: #ffffff;
+                            border-radius: 8px;
+                            overflow: hidden;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        }
 
-                    .header {
-                        background-color: #183B4E;
-                        padding: 20px;
-                        color: #ffffff;
-                        text-align: center;
-                    }
+                        .header {
+                            background-color: #183B4E;
+                            padding: 20px;
+                            color: #ffffff;
+                            text-align: center;
+                        }
 
-                    .header h1 {
-                        margin: 0;
-                        font-size: 24px;
-                    }
+                        .header h1 {
+                            margin: 0;
+                            font-size: 24px;
+                        }
 
-                    .content {
-                        padding: 20px;
-                        font-size: 16px;
-                        line-height: 1.5;
-                        color: #333333;
-                    }
+                        .content {
+                            padding: 20px;
+                            font-size: 16px;
+                            line-height: 1.5;
+                            color: #333333;
+                        }
 
-                    .content p {
-                        margin-bottom: 20px;
-                    }
+                        .content p {
+                            margin-bottom: 20px;
+                        }
 
-                    .otp-code {
-                        display: inline-block;
-                        background-color: #183B4E;
-                        color: #ffffff;
-                        padding: 12px 20px;
-                        font-size: 24px;
-                        text-decoration: none;
-                        border-radius: 4px;
-                        text-align: center;
-                        margin-top: 10px;
-                    }
+                        .otp-code {
+                            display: inline-block;
+                            background-color: #183B4E;
+                            color: #ffffff;
+                            padding: 12px 20px;
+                            font-size: 24px;
+                            text-decoration: none;
+                            border-radius: 4px;
+                            text-align: center;
+                            margin-top: 10px;
+                        }
 
-                    .otp-code:hover {
-                        background-color: #144051;
-                    }
+                        .otp-code:hover {
+                            background-color: #144051;
+                        }
 
-                    .footer {
-                        padding: 20px;
-                        text-align: center;
-                        font-size: 14px;
-                        color: #888888;
-                        background-color: #f4f4f4;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="email-container">
-                    <!-- Header -->
-                    <div class="header">
-                        <h1>EasyVent</h1>
-                    </div>
-                    
-                    <!-- Body Content -->
-                    <div class="content">
-                        <p>Hi there,</p>
-                        <p>We received a request to verify your email address for EasyVent. To complete your verification process, please enter the following One-Time Password (OTP) on the verification page:</p>
+                        .footer {
+                            padding: 20px;
+                            text-align: center;
+                            font-size: 14px;
+                            color: #888888;
+                            background-color: #f4f4f4;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="email-container">
+                        <!-- Header -->
+                        <div class="header">
+                            <h1>EasyVent</h1>
+                        </div>
                         
-                        <!-- OTP Code -->
-                        <p class="otp-code">'.$currentOTP.'</p>
+                        <!-- Body Content -->
+                        <div class="content">
+                            <p>Hi there,</p>
+                            <p>We received a request to verify your email address for EasyVent. To complete your verification process, please enter the following One-Time Password (OTP) on the verification page:</p>
+                            
+                            <!-- OTP Code -->
+                            <p class="otp-code">'.$currentOTP.'</p>
 
-                        <p>If you did not request this, please ignore this email.</p>
+                            <p>If you did not request this, please ignore this email.</p>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="footer">
+                            <p>If you have any questions or need assistance, feel free to reach out to our support team at <a href="mailto:admin@easyvent.shop">admin@easyvent.shop</a>.</p>
+                        </div>
                     </div>
+                </body>
+                </html>
+        ';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
-                    <!-- Footer -->
-                    <div class="footer">
-                        <p>If you have any questions or need assistance, feel free to reach out to our support team at <a href="mailto:admin@easyvent.shop">admin@easyvent.shop</a>.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-      ';
-      $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+        $mail->send();
 
-      $mail->send();
-
-      $response->data = new stdClass();
-      $response->data->code = $currentOTP;
-      $response->data->id = $row["id"];
-      print_r(json_encode($response));
-  } catch (Exception $e) {
-      echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-  }
+        $response->data = new stdClass();
+        $response->data->code = $currentOTP;
+        $response->data->id = $row["id"];
+        print_r(json_encode($response));
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    }
 
   } else {
     $response->error = new stdClass();
