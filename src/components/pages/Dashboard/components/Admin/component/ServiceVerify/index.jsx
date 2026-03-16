@@ -181,6 +181,7 @@ const ServiceVerify = () => {
       setBlockService(null);
       initiateServiceData(id);
       setIsLoading(false);
+      setRejectingForm(null);
     })
     .catch(handleError);
   };
