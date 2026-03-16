@@ -109,6 +109,7 @@ const CustomerForm = () => {
             <Input
               id="otp__code"
               type="text"
+              key="otp_code"
               onChange={(event) => updateUser(event, "otp_code")}
               required
             />
@@ -136,6 +137,7 @@ const CustomerForm = () => {
           <Input
             id="email"
             type="email"
+            key="email"
             placeholder="m@example.com"
             onChange={(event) => updateUser(event, "email")}
             required
