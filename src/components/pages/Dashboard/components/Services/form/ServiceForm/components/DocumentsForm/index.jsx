@@ -12,6 +12,7 @@ import { FileInput, Trash, Upload, X } from "lucide-react";
 import { useRef, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
 
 const DocumentsForm = ({ onSubmit }) => {
   const formRef = useRef();
@@ -24,6 +25,10 @@ const DocumentsForm = ({ onSubmit }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
+
+    if (documents.length === 0) {
+      return toast("Validation Error", { description: "Please provide the required document(s)." });
+    }
 
     setIsLoading(true);
 
@@ -63,9 +68,9 @@ const DocumentsForm = ({ onSubmit }) => {
   return (
     <form ref={formRef} onSubmit={handleSubmit}>
       <DialogHeader>
-        <DialogTitle>Require Documents</DialogTitle>
+        <DialogTitle>Required Documents</DialogTitle>
         <DialogDescription>
-          Please upload documents related to your service, this is required for verifying your credibility.
+          Please upload documents related to your service, this is required for verifying your credibility. (Business Permit/CV)
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-3 py-5">
