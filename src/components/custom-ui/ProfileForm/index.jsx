@@ -43,6 +43,7 @@ import BDOLOGO from "@/assets/images/bdo_logo.png";
 import BPILOGO from "@/assets/images/bpi_logo.png";
 import GCASHLOGO from "@/assets/images/gcash_logo.png";
 import LANDBANKLOGO from "@/assets/images/landbank_logo.png";
+import { toast } from "sonner";
 
 const PAYMENT_TYPES = [
   { label: "BDO", value: "BDO" },
@@ -263,6 +264,18 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (!Array.isArray(contacts) || contacts.length === 0) {
+      return toast("Validation Error", { description: "Please provide atleast 1 contact details." });
+    }
+
+    if (!date_of_birth) {
+      return toast("Validation Error", { description: "Missing Date of Birth" });
+    }
+
+    if (isProvider && (!Array.isArray(profileState.payments) || profileState.payments.length === 0)) {
+      return toast("Validation Error", { description: "Please provide atleast 1 payment method details." });
+    }
     if (onSubmit) onSubmit(profileState);
   }
 
@@ -374,14 +387,6 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
 
                 updateField(formatted, "date_of_birth");
               }} />
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row mb-[1.5rem] pt-[0.5rem]">
-            <div className="md:w-[25%]">BIO</div>
-
-            <div className="md:w-[75%] flex items-center gap-[1rem]">
-              <Textarea onChange={(event) => updateField(event.target.value, "bio")} value={bio} />
             </div>
           </div>
 
