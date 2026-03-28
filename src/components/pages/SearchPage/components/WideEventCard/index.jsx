@@ -18,7 +18,7 @@ const WideEventCard = ({ item, handleBookmark }) => {
   const navigate = useNavigate();
 
   return (
-    <Card className="p-0 my-5 w-[95%]">
+    <Card className="p-0 my-5 w-[95%] cursor-pointer" onClick={() => navigate("/servicehotel", { state: { id: item.id } })}>
       <CardContent className="flex aspect-square gap-5 p-4 h-[20rem] md:h-[15rem] w-full">
         <div className="rounded-md overflow-hidden h-full w-[20rem]">
           <img src={item.image} className="h-full w-full" />
@@ -46,10 +46,12 @@ const WideEventCard = ({ item, handleBookmark }) => {
           </div>
 
           <div className="flex mt-auto gap-3 justify-between">
-            <Button variant="outline" type="button" onClick={() => handleBookmark(item)} className="rounded-full w-[2.3rem] h-[2.3rem]">
+            <Button variant="outline" type="button" onClick={(event) => {
+              event.stopPropagation();
+              handleBookmark(item)
+            }} className="rounded-full w-[2.3rem] h-[2.3rem]">
               <Heart strokeWidth={item.liked ? 0 : 2} fill={item.liked ? "#ff7b7b" : "transparent"} />
             </Button>
-            <Button className="md:w-[10rem] mt-auto ml-auto" onClick={() => navigate("/servicehotel", { state: { id: item.id } })}>Book Now</Button>
           </div>
         </div>
       </CardContent>

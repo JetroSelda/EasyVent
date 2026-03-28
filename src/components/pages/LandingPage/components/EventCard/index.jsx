@@ -6,8 +6,18 @@ import { useNavigate } from "react-router-dom";
 const EventCard = ({ item }) => {
   const navigate = useNavigate();
   return (
-    <Card className="p-0">
-      <CardContent className="flex flex-col aspect-square p-4 h-[26rem]">
+    <Card
+      className="p-0 cursor pointer"
+       onClick={() => {
+          if (item.category !== "Independent Provider") {
+            return navigate("/servicehotel", { state: { id: item.id }});
+          }
+
+          navigate("/independentservice", { state: { id: item.id }})
+        }}
+    >
+
+      <CardContent className="flex flex-col aspect-square p-4 h-[23rem]">
         <div className="rounded-md overflow-hidden h-[10rem]">
           <img src={item.image} className="h-full w-full" />
         </div>
@@ -24,13 +34,6 @@ const EventCard = ({ item }) => {
           <span className="text-black text-[0.85rem]">{item.reviewNo ?? 0} review(s)</span>
         </div>
 
-        <Button className="w-full mt-auto" onClick={() => {
-          if (item.category !== "Independent Provider") {
-            return navigate("/servicehotel", { state: { id: item.id }});
-          }
-
-          navigate("/independentservice", { state: { id: item.id }})
-        }}>Book Now</Button>
       </CardContent>
     </Card>
   )
