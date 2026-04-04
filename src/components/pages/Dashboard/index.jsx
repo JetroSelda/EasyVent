@@ -16,6 +16,20 @@ import { useEffect, useState } from "react";
 
 import { Outlet, useNavigate } from 'react-router-dom';
 
+const paths = [
+  { path: "/dashboard/admin", role: ["Admin", "Staff"] },
+  { path: "/dashboard/services", role: ["Provider"] },
+  { path: "/dashboard/services/form", role: ["Provider"] },
+  { path: "/dashboard/services/details", role: ["Provider"] },
+  { path: "/dashboard/bookings", role: ["Customer"] },
+  { path: "/dashboard/profile", role: ["Customer", "Provider", "Admin", "Staff"] },
+  { path: "/dashboard/messages", role: ["Customer", "Provider"] },
+  { path: "/dashboard/feedback", role: ["Admin", "Staff"] },
+  { path: "/dashboard/serviceListing", role: ["Admin", "Staff"] },
+  { path: "/dashboard/admin/service", role: ["Admin", "Staff"] },
+  { path: "/dashboard/settings", role: ["Admin"] },
+];
+
 const Dashboard = () => {
   const [pageSelected, setPageSelected] = useState("Dashboard");
   const navigate = useNavigate();
@@ -26,7 +40,23 @@ const Dashboard = () => {
 
     const parsedUserData = JSON.parse(userData ?? null) || {};
 
-    const { expiration } = parsedUserData;
+    const { expiration, role } = parsedUserData;
+
+    const path = window.location.pathname;
+
+    console.log("Path/Admin", path, role);
+
+    const currentPath = paths.find((item) => item.path === path);
+
+    if (path !== "/dashboard" && (!currentPath || !currentPath.role.includes(role))) {
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    if (path === "/dashboard/services" && role !== "Provider") {
+      window.location.href = "/dashboard";
+      return;
+    }
 
     const today = new Date();
 
