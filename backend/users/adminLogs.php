@@ -5,7 +5,7 @@
   $response = new stdClass();
 
   $query = "
-    SELECT logtbl.title, logtbl.description, logtbl.created_at, usertbl.personal_name, usertbl.last_name FROM logs_tbl logtbl, users_tbl usertbl WHERE logtbl.id_author = usertbl.id AND logtbl.role = 'Admin'
+    SELECT logtbl.title, logtbl.description, logtbl.created_at, usertbl.personal_name, usertbl.last_name FROM logs_tbl logtbl, users_tbl usertbl WHERE logtbl.id_author = usertbl.id AND logtbl.role = 'Admin' ORDER BY logtbl.id DESC
   ";
 
   $statement = $connect->prepare($query);

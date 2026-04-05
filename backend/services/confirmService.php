@@ -13,6 +13,7 @@
   $id = $_POST["id"];
   $name = $_POST["name"];
   $email = $_POST["email"];
+  $userId = $_POST["userId"];
 
   $mutate = "
     UPDATE `services_tbl`
@@ -58,6 +59,15 @@
     UPDATE users_tbl
     SET `status`='Active'
     WHERE id = $providerId
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
+
+  $mutate = "
+    INSERT INTO `logs_tbl`
+      (`title`, `description`, `role`, `id_author`)
+    VALUES ('Confirmed Service','Confirmed $providerProperty service.','Admin','$userId')
   ";
 
   $statement = $connect->prepare($mutate);

@@ -74,7 +74,7 @@ const BlockServiceForm = ({ id, onSubmit }) => {
         <DialogClose asChild>
           <Button type="button" variant="outline">Cancel</Button>
         </DialogClose>
-        <Button type="submit" variant="destructive" onClick={() => formRef.current.requestSubmit()}>Block Service</Button>
+        <Button type="button" variant="destructive" onClick={() => formRef.current.requestSubmit()}>Block Service</Button>
       </DialogFooter>
   </form>
   )
@@ -134,6 +134,10 @@ const ServicesTable = () => {
   const blockService = (id, reason) => {
     const formData = new FormData();
 
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+    formData.append("userId", parsedData.id);
+
     formData.append("id", id);
     formData.append("status", "Blocked");
     formData.append("block_reason", reason);
@@ -152,6 +156,10 @@ const ServicesTable = () => {
 
   const unblockService = (id) => {
     const formData = new FormData();
+
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+    formData.append("userId", parsedData.id);
 
     formData.append("id", id);
     formData.append("status", "Published");
@@ -184,8 +192,10 @@ const ServicesTable = () => {
 
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
+              <SelectItem value="Verification">Verification</SelectItem>
               <SelectItem value="Published">Published</SelectItem>
               <SelectItem value="Rejected">Rejected</SelectItem>
+              <SelectItem value="Blocked">Blocked</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -254,7 +264,7 @@ const ServicesTable = () => {
                                 {service.status === "Blocked" && (
                                   <CommandItem
                                     onSelect={() => {
-                                      unblockService(service.id)
+                                      unblockService(service.id);
                                     }}
                                   >
                                     Unblock Service

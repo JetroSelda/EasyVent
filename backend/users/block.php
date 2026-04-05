@@ -22,10 +22,12 @@
   $response->data->title = "Successfully updated user.";
   $response->data->message = "You have successfully updated user status.";
 
+  $msgTitle = $status === "Blocked" ? "Blocked" : "Unblocked";
+
   $mutate = "
     INSERT INTO `logs_tbl`
       (`title`, `description`, `role`, `id_author`)
-    VALUES ('$status User','$status user $email','Admin','$userId')
+    VALUES ('$msgTitle User','$msgTitle user $email','Admin','$userId')
   ";
 
   $statement = $connect->prepare($mutate);

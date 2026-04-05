@@ -15,6 +15,7 @@
   $reject_reason = addslashes($_POST["reject_reason"]);
   $name = $_POST["name"];
   $email = $_POST["email"];
+  $userId = $_POST["userId"];
 
   $mutate = "
     UPDATE `services_tbl`
@@ -79,6 +80,15 @@
     $statement = $connect->prepare($mutate);
     $statement->execute();
   }
+
+  $mutate = "
+    INSERT INTO `logs_tbl`
+      (`title`, `description`, `role`, `id_author`)
+    VALUES ('Rejected Service','Rejected $providerProperty service.','Admin','$userId')
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
 
   $mail = new PHPMailer(true);
 

@@ -80,8 +80,13 @@ const UsersTable = () => {
   const handleBlockUser = (user) => {
     const formData = new FormData();
 
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+
     formData.append("id", user.id);
+    formData.append("email", user.email);
     formData.append("status", "Blocked");
+    formData.append("userId", parsedData.id);
 
     fetch(`${import.meta.env.VITE_API_URL}/users/block.php`, {
       method: "POST",
@@ -95,8 +100,13 @@ const UsersTable = () => {
   const handleUnblockUser = (user) => {
     const formData = new FormData();
 
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+
     formData.append("id", user.id);
+    formData.append("email", user.email);
     formData.append("status", "Active");
+    formData.append("userId", parsedData.id);
 
     fetch(`${import.meta.env.VITE_API_URL}/users/block.php`, {
       method: "POST",

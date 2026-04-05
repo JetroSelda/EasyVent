@@ -144,6 +144,10 @@ const ServiceVerify = () => {
     setIsLoading(true);
     const formData = new FormData();
 
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+    formData.append("userId", parsedData.id);
+
     formData.append("id", id);
     formData.append("status", "Blocked");
     formData.append("block_reason", reason);
@@ -166,11 +170,15 @@ const ServiceVerify = () => {
     setIsLoading(true);
     const formData = new FormData();
 
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+
     formData.append("id", id);
     formData.append("status", "Rejected");
     formData.append("reject_reason", reason);
     formData.append("name", property_name);
     formData.append("email", serviceState.email);
+    formData.append("userId", parsedData.id);
 
     fetch(`${import.meta.env.VITE_API_URL}/services/rejectService.php`, {
       method: "POST",
@@ -190,6 +198,10 @@ const ServiceVerify = () => {
     if (isLoading) return;
     setIsLoading(true);
     const formData = new FormData();
+
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+    formData.append("userId", parsedData.id);
 
     formData.append("id", id);
     formData.append("status", "Published");
@@ -211,9 +223,13 @@ const ServiceVerify = () => {
     setIsLoading(true);
     const formData = new FormData();
 
+    const currUser = localStorage.getItem("user-data");
+    const parsedData = JSON.parse(currUser ?? "{}");
+
     formData.append("id", id);
     formData.append("name", property_name);
     formData.append("email", serviceState.email);
+    formData.append("userId", parsedData.id);
 
     fetch(`${import.meta.env.VITE_API_URL}/services/confirmService.php`, {
       method: "POST",

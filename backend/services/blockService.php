@@ -5,6 +5,7 @@
   $id = $_POST["id"];
   $status = $_POST["status"];
   $block_reason = addslashes($_POST["block_reason"]);
+  $userId = $_POST["userId"];
 
   $mutate = "
     UPDATE `services_tbl`
@@ -42,6 +43,17 @@
     INSERT INTO `notifications_tbl`
     (`id_user`, `id_ref`, `title`, `description`, `status`)
     VALUES ($providerId, $id, '$status Listing', '$providerProperty has been $status.', 'Unread')
+  ";
+
+  $statement = $connect->prepare($mutate);
+  $statement->execute();
+
+  $msgTitle = $status === "Blocked" ? "Blocked" : "Unblocked";
+
+  $mutate = "
+    INSERT INTO `logs_tbl`
+      (`title`, `description`, `role`, `id_author`)
+    VALUES ('$msgTitle Service','$msgTitle $providerProperty service.','Admin','$userId')
   ";
 
   $statement = $connect->prepare($mutate);
