@@ -26,7 +26,7 @@ import { Ellipsis } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-const UsersTable = () => {
+const UsersTable = ({ searchFilter }) => {
   const [usersList, setUsersList] = useState([]);
 
   const parseUsersData = ({ users = [], error }) => {
@@ -117,6 +117,11 @@ const UsersTable = () => {
       .catch(handleFetchError);
   };
 
+  const filteredUser = usersList.filter((item) =>
+    item.name?.toLowerCase()?.includes(searchFilter?.toLowerCase()) ||
+    item.email?.toLowerCase()?.includes(searchFilter?.toLowerCase())
+  )
+
   return (
     <Card className="p-0 rounded-md">
       <CardContent className="p-0">
@@ -130,7 +135,7 @@ const UsersTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {usersList.map((user) => (
+            {filteredUser.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium px-5 py-2 h-[3.5rem]">
                   <div className="w-[90%] overflow-hidden text-ellipsis">

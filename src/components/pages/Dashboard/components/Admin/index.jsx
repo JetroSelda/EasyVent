@@ -4,7 +4,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { ListCheck, Mail, UserPlus, Users } from "lucide-react";
+import { ListCheck, Mail, Search, UserPlus, Users } from "lucide-react";
 import UsersTable from "./component/UsersTable";
 import ServicesTable from "./component/ServicesTable";
 import { useEffect, useRef, useState } from "react";
@@ -119,6 +119,8 @@ const AdminPage = () => {
   const [currentTab, setCurrentTab] = useState("users");
   const [enabledInvite, setEnabledInvite] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { role } = userData;
 
   const openInviteForm = () => setEnabledInvite(true);
@@ -136,8 +138,20 @@ const AdminPage = () => {
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-      <Button onClick={openInviteForm} type="button" className="bg-[#183B4E] hover:bg-[#2e5e78] ml-auto w-[8rem]"><UserPlus /> Invite Users</Button>
-      <UsersTable />
+      <div className="flex items-center justify-between">
+        <div className="relative w-[20rem]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2 pointer-events-none" />
+          <Input
+            type="search" 
+            placeholder="Search users..."
+            className="pl-10 pr-3 w-full h-8"
+            onChange={(evt) => setSearchQuery(evt.target.value)}
+          />
+        </div>
+
+        <Button onClick={openInviteForm} type="button" className="bg-[#183B4E] hover:bg-[#2e5e78] ml-auto w-[8rem]"><UserPlus /> Invite Users</Button>
+      </div>
+      <UsersTable searchFilter={searchQuery} />
 
       <Dialog open={!!enabledInvite} onOpenChange={setEnabledInvite}>
         <DialogContent className="sm:max-w-[355px] max-h-[85vh] overflow-auto">
