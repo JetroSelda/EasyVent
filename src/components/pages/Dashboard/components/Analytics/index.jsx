@@ -115,7 +115,7 @@ const Analytics = () => {
 
   return (
     <div className="grid gap-y-6">
-      {userState.role === "Admin" || userState.role === "Staff" && (
+      {(userState.role === "Admin" || userState.role === "Staff") && (
         <div className="flex justify-between px-5">
           <div className="flex items-center gap-y-3">
             <div className="flex items-center mr-3 gap-2">

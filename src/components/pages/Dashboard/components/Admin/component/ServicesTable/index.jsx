@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Filter } from "lucide-react";
 import { formatCurrency } from "../../../../../../../api/util";
 
 import {
@@ -36,6 +36,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
 import Textarea from "@/components/ui/textarea";
@@ -76,11 +84,14 @@ const ServicesTable = () => {
   const navigate = useNavigate();
   const [servicesList, setServicesList] = useState([]);
   const [blockedService, setBlockService] = useState(null);
+  const [filter, setFilter] = useState("");
 
   const parseServicesData = ({ data = {} }) => {
     const { services = [] } = data;
 
-    const parsedServices = services.map((service) => {
+    const filteredData = services.filter((item) => !filter || filter === "all" || filter === item.status);
+
+    const parsedServices = filteredData.map((service) => {
       const parsedService = {
         ...service,
         amenities: JSON.parse(service.amenities ?? "[]"),
@@ -158,99 +169,120 @@ const ServicesTable = () => {
 
   useEffect(() => {
     getServicesData();
-  }, []);
+  }, [filter]);
   return (
-    <Card className="p-0 rounded-md">
-      <CardContent className="p-0">
-        <Table>
-          <TableHeader>
-            <TableRow className="text-gray-400">
-              <TableHead className="w-[150px] px-5 py-3 text-gray-500">Record ID</TableHead>
-              <TableHead className="w-[200px] text-gray-500">Name</TableHead>
-              <TableHead className="text-gray-500">Category</TableHead>
-              {/* <TableHead className="text-gray-500">Rating</TableHead> */}
-              <TableHead className="px-5 py-3 text-gray-500">Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {servicesList.map((service) => (
-              <TableRow key={service.invoice}>
-                <TableCell className="font-medium px-5 py-2">Servc{service.id.toString().padStart(4, "0")}</TableCell>
-                <TableCell>
-                  <div className="w-[90%] overflow-hidden text-ellipsis">
-                    {service.property_name}
-                  </div>
-                </TableCell>
-                <TableCell>{service.category}</TableCell>
-                {/* <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Star fill="#ffb86a" size={16} /> 4.5
-                  </div>
-                </TableCell> */}
-                <TableCell className="px-5 py-2">
-                  <div className="flex items-center justify-between">
-                    <span>{service.status}</span>
+    <div className="grid gap-y-6">
+      <div className="flex justify-between px-1">
+        <div className="flex items-center gap-y-3">
+          <div className="flex items-center mr-3 gap-2">
+            <Filter className="w-4 h-4" /> Filter Status
+          </div>
+          <Select value={filter || "all"} onValueChange={setFilter}>
+            <SelectTrigger className="w-50">
+              <SelectValue placeholder="Filter By" />
+            </SelectTrigger>
 
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="Published">Published</SelectItem>
+              <SelectItem value="Rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-                    <Popover align="right">
-                      <PopoverTrigger asChild>
-                        <Button variant="icon"><Ellipsis /></Button>
-                      </PopoverTrigger>
-
-                      <PopoverContent className="w-[120px] p-0">
-                        <Command>
-                          <CommandList>
-                            <CommandGroup>
-
-                              <CommandItem
-                                onSelect={() => {
-                                  openService(service.id);
-                                }}
-                              >
-                                Open Service
-                              </CommandItem>
-
-                              {service.status === "Published" && (
-                                <CommandItem
-                                  onSelect={() => {
-                                    setBlockService(service.id);
-                                  }}
-                                >
-                                  Block Service
-                                </CommandItem>
-                              )}
-
-                              {service.status === "Blocked" && (
-                                <CommandItem
-                                  onSelect={() => {
-                                    unblockService(service.id)
-                                  }}
-                                >
-                                  Unblock Service
-                                </CommandItem>
-                              )}
-                              
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </TableCell>
+      <Card className="p-0 rounded-md">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="text-gray-400">
+                <TableHead className="w-[150px] px-5 py-3 text-gray-500">Record ID</TableHead>
+                <TableHead className="w-[200px] text-gray-500">Name</TableHead>
+                <TableHead className="text-gray-500">Category</TableHead>
+                {/* <TableHead className="text-gray-500">Rating</TableHead> */}
+                <TableHead className="px-5 py-3 text-gray-500">Status</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
+            </TableHeader>
+            <TableBody>
+              {servicesList.map((service) => (
+                <TableRow key={service.invoice}>
+                  <TableCell className="font-medium px-5 py-2">Servc{service.id.toString().padStart(4, "0")}</TableCell>
+                  <TableCell>
+                    <div className="w-[90%] overflow-hidden text-ellipsis">
+                      {service.property_name}
+                    </div>
+                  </TableCell>
+                  <TableCell>{service.category}</TableCell>
+                  {/* <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Star fill="#ffb86a" size={16} /> 4.5
+                    </div>
+                  </TableCell> */}
+                  <TableCell className="px-5 py-2">
+                    <div className="flex items-center justify-between">
+                      <span>{service.status}</span>
 
-      <Dialog open={!!blockedService} onOpenChange={setBlockService}>
-        <DialogContent className="sm:max-w-[355px] max-h-[85vh] overflow-auto">
-          {!!blockedService && (
-            <BlockServiceForm id={blockedService} onSubmit={blockService} />
-          )}
-        </DialogContent>
-      </Dialog>
-    </Card>
+
+                      <Popover align="right">
+                        <PopoverTrigger asChild>
+                          <Button variant="icon"><Ellipsis /></Button>
+                        </PopoverTrigger>
+
+                        <PopoverContent className="w-[120px] p-0">
+                          <Command>
+                            <CommandList>
+                              <CommandGroup>
+
+                                <CommandItem
+                                  onSelect={() => {
+                                    openService(service.id);
+                                  }}
+                                >
+                                  Open Service
+                                </CommandItem>
+
+                                {service.status === "Published" && (
+                                  <CommandItem
+                                    onSelect={() => {
+                                      setBlockService(service.id);
+                                    }}
+                                  >
+                                    Block Service
+                                  </CommandItem>
+                                )}
+
+                                {service.status === "Blocked" && (
+                                  <CommandItem
+                                    onSelect={() => {
+                                      unblockService(service.id)
+                                    }}
+                                  >
+                                    Unblock Service
+                                  </CommandItem>
+                                )}
+                                
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+
+        <Dialog open={!!blockedService} onOpenChange={setBlockService}>
+          <DialogContent className="sm:max-w-[355px] max-h-[85vh] overflow-auto">
+            {!!blockedService && (
+              <BlockServiceForm id={blockedService} onSubmit={blockService} />
+            )}
+          </DialogContent>
+        </Dialog>
+      </Card>
+    </div>
   )
 };
 
