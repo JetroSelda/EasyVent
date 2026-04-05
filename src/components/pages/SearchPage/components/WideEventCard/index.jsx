@@ -46,7 +46,10 @@ const WideEventCard = ({ item, handleBookmark }) => {
           </div>
 
           <div className="flex mt-auto gap-3 justify-between">
-            <Button variant="outline" type="button" onClick={() => handleBookmark(item)} className="rounded-full w-[2.3rem] h-[2.3rem]">
+            <Button variant="outline" type="button" onClick={(event) => {
+              event.stopPropagation();
+              handleBookmark(item)
+            }} className="rounded-full w-[2.3rem] h-[2.3rem]">
               <Heart strokeWidth={item.liked ? 0 : 2} fill={item.liked ? "#ff7b7b" : "transparent"} />
             </Button>
           </div>
