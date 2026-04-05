@@ -32,7 +32,7 @@ const chartConfig = {
   },
 }
 
-function TopCategories() {
+function TopCategories({ filter }) {
   const [data, setData] = useState([]);
   const initiateData = (userData) => {
     const formData = new FormData();
@@ -45,7 +45,7 @@ function TopCategories() {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const services = data?.services ?? [];
+        const services = filter(data?.services ?? []);
         
         const categories = ["Function Hall", "Restaurant", "Independent Provider", "Hotel/Resort"];
 
@@ -68,7 +68,7 @@ function TopCategories() {
     if (!parsedData) return;
 
     initiateData(parsedData);
-  }, []);
+  }, [filter]);
 
   return (
     <Card>

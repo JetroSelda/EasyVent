@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { NotebookPen, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const TotalProviders = () => {
+const TotalProviders = ({ filter }) => {
   const [total, setTotal] = useState(0);
   const initiateData = (userData) => {
     const formData = new FormData();
@@ -15,7 +15,7 @@ const TotalProviders = () => {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const users = data?.users ?? [];
+        const users = filter(data?.users ?? []);
 
         setTotal(users.length);
       })
@@ -30,7 +30,7 @@ const TotalProviders = () => {
     if (!parsedData) return;
 
     initiateData(parsedData);
-  }, []);
+  }, [filter]);
   return (
     <Card className="py-0">
       <CardContent className="px-0">

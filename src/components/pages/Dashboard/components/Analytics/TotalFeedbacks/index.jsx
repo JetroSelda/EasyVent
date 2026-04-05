@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquareText, NotebookPen, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const TotalFeedbacks = () => {
+const TotalFeedbacks = ({ filter }) => {
   const [total, setTotal] = useState(0);
   const initiateData = (userData) => {
     const formData = new FormData();
@@ -15,7 +15,7 @@ const TotalFeedbacks = () => {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const feedbacks = data?.feedbacks ?? [];
+        const feedbacks = filter(data?.feedbacks ?? []);
 
         setTotal(feedbacks.length);
       })
@@ -30,7 +30,7 @@ const TotalFeedbacks = () => {
     if (!parsedData) return;
 
     initiateData(parsedData);
-  }, []);
+  }, [filter]);
   return (
     <Card className="py-0">
       <CardContent className="px-0">

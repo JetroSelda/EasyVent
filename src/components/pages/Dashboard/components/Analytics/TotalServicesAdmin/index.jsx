@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { NotebookPen } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const TotalServicesAdmin = () => {
+const TotalServicesAdmin = ({ filter }) => {
   const [total, setTotal] = useState(0);
   const initiateData = (userData) => {
     const formData = new FormData();
@@ -15,7 +15,8 @@ const TotalServicesAdmin = () => {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const services = data?.services ?? [];
+        const services = filter(data?.services ?? []);
+        console.log("Services [0]", services);
 
         setTotal(services.length);
       })
@@ -30,7 +31,7 @@ const TotalServicesAdmin = () => {
     if (!parsedData) return;
 
     initiateData(parsedData);
-  }, []);
+  }, [filter]);
   return (
     <Card className="py-0">
       <CardContent className="px-0">

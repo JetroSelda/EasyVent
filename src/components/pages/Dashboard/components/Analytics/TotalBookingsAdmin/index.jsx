@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { CalendarCheck2, NotebookPen } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const TotalBookingsAdmin = () => {
+const TotalBookingsAdmin = ({ filter }) => {
   const [total, setTotal] = useState(0);
   const initiateData = (userData) => {
     const formData = new FormData();
@@ -15,7 +15,7 @@ const TotalBookingsAdmin = () => {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const bookings = data?.bookings ?? [];
+        const bookings = filter(data?.bookings ?? []);
 
         setTotal(bookings.length);
       })
@@ -30,7 +30,7 @@ const TotalBookingsAdmin = () => {
     if (!parsedData) return;
 
     initiateData(parsedData);
-  }, []);
+  }, [filter]);
   return (
     <Card className="py-0">
       <CardContent className="px-0">

@@ -20,7 +20,7 @@ const chartConfig = {
   },
 }
 
-function TopServices() {
+function TopServices({ filter }) {
   const [bookings, setBookings] = useState([]);
 
   const data = useMemo(() => {
@@ -58,7 +58,7 @@ function TopServices() {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        setBookings(data?.bookings ?? []);
+        setBookings(filter(data?.bookings ?? []));
       })
   }
 
@@ -73,7 +73,7 @@ function TopServices() {
     if (!parsedData) return;
 
     initiateData(parsedData);
-  }, []);
+  }, [filter]);
   return (
     <Card>
       <CardHeader>
