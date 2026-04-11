@@ -32,20 +32,20 @@ const NavigationMenu = () => {
   ]
 
   return (
-    <div className="w-[100%] flex h-[3.8rem] shadow-2xs bg-white justify-between items-center-safe px-8 sticky z-[10] top-[0px]">
+    <div className="w-[100%] bg-transparent flex h-[3.8rem] justify-between items-center-safe px-8 sticky z-[10] top-[0px]">
       <div></div>
 
       <div className="flex gap-3">
         <div className="md:flex gap-2 items-center-safe hidden">
-          <Button variant="ghost" onClick={() => navigate("/")}>Home</Button>
+          <Button variant="ghost" className="text-white" onClick={() => navigate("/")}>Home</Button>
           
-          <Button variant="ghost" onClick={() => navigate("/about")}>About</Button>
+          <Button variant="ghost" className="text-white" onClick={() => navigate("/about")}>About</Button>
           
-          <Button variant="ghost" onClick={() => navigate("/contact")}>Contact Us</Button>
+          <Button variant="ghost" className="text-white" onClick={() => navigate("/contact")}>Contact Us</Button>
           
-          <Button variant="ghost" onClick={() => navigate("/policy")}>Privacy Policy</Button>
+          <Button variant="ghost" className="text-white" onClick={() => navigate("/policy")}>Privacy Policy</Button>
           
-          <Button variant="ghost" onClick={() => navigate("/terms")}>Terms & Conditions</Button>
+          <Button variant="ghost" className="text-white" onClick={() => navigate("/terms")}>Terms & Conditions</Button>
         </div>
 
         {userData && <Notifications userData={userData} />}

@@ -8,6 +8,7 @@ function App() {
   return (
     <>
       <RouteContextProvider>
+        <div className="fixed w-[100vw] h-[100vh] top-0 left-0 bg-black opacity-[0.7]" />
         <Routes />
       </RouteContextProvider>
 

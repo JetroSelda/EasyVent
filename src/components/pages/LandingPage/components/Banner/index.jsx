@@ -44,9 +44,9 @@ const Banner = ({ settingsState = {} }) => {
           Easy Events
         </Badge>
         
-          <p className="font-poppins text-4xl md:text-6xl font-bold text-[#183B4E]">{settingsState.landing_title}</p>
+          <p className="font-poppins text-4xl md:text-6xl font-bold text-white">{settingsState.landing_title}</p>
 
-          <p className="font-poppins text-[1.1rem] font-medium my-7 text-[#24343d]">
+          <p className="font-poppins text-[1.1rem] font-medium my-7 text-white">
             {settingsState.landing_description}
           </p>
 

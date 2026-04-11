@@ -129,7 +129,7 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
       </DialogHeader>
 
       <div className="grid grid-cols-1 gap-5 pt-7">
-        <div className="grid gap-2 w-[2rem]">
+        <div className="grid gap-2 w-[9rem]">
           <Label>Schedule</Label>
           <Input type="date" onChange={(event) => setSchedule(event.target.value)} />
         </div>
