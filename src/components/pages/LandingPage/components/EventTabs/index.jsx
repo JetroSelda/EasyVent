@@ -47,7 +47,7 @@ const EventTabs = ({ updateEventTab }) => {
               <Button onClick={() => updateEventTab("")} variant="link" className="text-[1rem]"><Columns /> Show All</Button>
               <Button onClick={() => updateEventTab("hotels")} variant="link" className="text-[1rem]"><Hotel /> Hotels/Resorts</Button>
               <Button onClick={() => updateEventTab("restaurants")} variant="link" className="text-[1rem]"><Utensils /> Restaurants</Button>
-              <Button onClick={() => updateEventTab("functionHalls")} variant="link" className="text-[1rem]"><Landmark /> Function Halls</Button>
+              <Button onClick={() => updateEventTab("functionHalls")} variant="link" className="text-[1rem]"><Landmark /> Travel Agencies</Button>
               <Button onClick={() => updateEventTab("serviceProviders")} variant="link" className="text-[1rem]"><Users /> Service Providers</Button>
             </div>
 

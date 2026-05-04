@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { CirclePlus, Download, Ellipsis, Trash, Upload } from "lucide-react";
+import { CircleAlert, CirclePlus, Download, Ellipsis, Trash, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -44,6 +44,8 @@ import BPILOGO from "@/assets/images/bpi_logo.png";
 import GCASHLOGO from "@/assets/images/gcash_logo.png";
 import LANDBANKLOGO from "@/assets/images/landbank_logo.png";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import DocumentsForm from "./components";
 
 const PAYMENT_TYPES = [
   { label: "BDO", value: "BDO" },
@@ -220,6 +222,7 @@ const PaymentsForm = ({ payments = [], onChange }) => {
 
 const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, onSubmit, isLoading, downloadTransaction }) => {
   const [profileState, setProfileState] = useState(defaultValues);
+  const navigate = useNavigate();
 
   const fileRef = useRef();
 
@@ -279,6 +282,35 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
     if (onSubmit) onSubmit(profileState);
   }
 
+  const handleDeactivate = async () => {
+    const formData = new FormData();
+    formData.append("userId", profileState.id);
+    const request = await fetch(`${import.meta.env.VITE_API_URL}/services/allBookings.php`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const response = await request.json();
+
+    const { data } = response;
+    const bookings = data?.bookings ?? [];
+
+    const confirmBookings = bookings.filter((item) => item.status === "Confirmed");
+
+    // if (confirmBookings.length) {
+    //   toast("Can't Proceed!", { description: "There are still ongoing bookings remaining in your services!" });
+    //   return;
+    // }
+
+    await fetch(`${import.meta.env.VITE_API_URL}/users/deactivate.php`, {
+      method: "POST",
+      body: formData,
+    });
+
+    localStorage.removeItem("user-data");
+    navigate("/login");
+  }
+
   return (
     <Card className="overflow-hidden w-full md:w-[60%] rounded-md shadow-xs">
       <CardContent className="px-[3rem] py-[0.5rem]">
@@ -303,8 +335,17 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
                     <Upload /> Upload photo
                   </Button>
                 </Label>
-                {((isProvider || isCustomer) && !isCreating) && <Button type="button" onClick={downloadTransaction}><Download /> Transaction History</Button>}
               </div>
+
+              {!isCreating && (
+                <div className="flex flex-col md:flex-row gap-3 md:gap-0">
+                  <Label htmlFor="display_picture">
+                    <Button type="button" variant="destructive" onClick={handleDeactivate}>
+                      <CircleAlert /> Deactivate Account
+                    </Button>
+                  </Label>
+                </div>
+              )}
             </div>
           </div>
 
@@ -382,7 +423,7 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
             <div className="md:w-[25%]">Date of Birth</div>
 
             <div className="md:w-[75%] flex items-center gap-[1rem]">
-              <DateInput defaultValue={date_of_birth} onChange={(updatedValue) => {
+              <DateInput defaultValue={date_of_birth && date_of_birth !== "0000-00-00" ? date_of_birth : ""} onChange={(updatedValue) => {
                 const formatted = formatISODate(updatedValue);
 
                 updateField(formatted, "date_of_birth");
@@ -391,7 +432,21 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
           </div>
 
           {isProvider && (
+            <div className="flex flex-col md:flex-row mb-[1.5rem] md:items-center">
+              <div className="md:w-[25%]">Automated Message</div>
+
+              <div className="md:w-[75%] flex items-center gap-[1rem]">
+                <Textarea value={bio} onChange={(e) => updateField(e.target.value, "bio")} />
+              </div>
+            </div>
+          )}
+
+          {isProvider && (
             <PaymentsForm payments={profileState.payments} onChange={(value) => updateField(value, "payments")} />
+          )}
+
+          {isProvider && (
+            <DocumentsForm documents={profileState.documents} onChange={(value) => updateField(value, "documents")} />
           )}
 
           <div className="flex justify-end">

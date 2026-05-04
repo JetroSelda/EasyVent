@@ -85,7 +85,7 @@ const Filters = ({ toggleType, serviceTypes, maxPrice = 0, eventList, setSearchS
             <Checkbox checked={serviceTypes.includes("Restaurant")} id="rest-checkbox" onClick={() => toggleType("Restaurant")} /> <Label htmlFor="rest-checkbox">Restaurant</Label>
           </div>
           <div className="flex gap-3 items-center mb-4">
-            <Checkbox checked={serviceTypes.includes("Function Hall")} id="hall-checkbox" onClick={() => toggleType("Function Hall")} /> <Label htmlFor="hall-checkbox">Function Hall</Label>
+            <Checkbox checked={serviceTypes.includes("Function Hall")} id="hall-checkbox" onClick={() => toggleType("Function Hall")} /> <Label htmlFor="hall-checkbox">Travel Agencies</Label>
           </div>
         </CardContent>
       </Card>

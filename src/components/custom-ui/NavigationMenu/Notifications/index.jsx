@@ -5,12 +5,17 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Bell, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import SoundFile from "@/assets/notif.wav";
 
 function timeFromNow(date) {
   const now = new Date();
-  const diff = date - now; // positive if in future, negative if in past
+  const dateObj = new Date(date);
+  dateObj.setHours(dateObj.getHours() + 8);
+  const dateTime = dateObj.getTime();
+  const diff = dateTime - now; // positive if in future, negative if in past
   const diffAbs = Math.abs(diff);
 
   const seconds = Math.floor(diffAbs / 1000);
@@ -52,11 +57,14 @@ function timeFromNow(date) {
   return `${value} ${unit}${plural} ${direction}`;
 }
 
-const Notifications = ({ userData }) => {
+const Notifications = ({ userData, isLanding }) => {
   const [notifications, setNotifications] = useState([]);
   const sorted = [...notifications];
   sorted.reverse();
   const navigate = useNavigate();
+
+  const prevCountRef = useRef(0);
+  const audioRef = useRef(new Audio(SoundFile))
 
   const initiateData = () => {
     if (!userData) return;
@@ -75,6 +83,13 @@ const Notifications = ({ userData }) => {
       .then(({ data }) => {
         setNotifications(data?.notifications ?? []);
 
+        if (prevCountRef.current !== notifications.length && data?.notifications?.some((item) => item.status === "Unread")) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(() => {});
+
+          prevCountRef.current = notifications.length
+        }
+
         setTimeout(() => initiateData(), 5000);
       })
 
@@ -87,6 +102,17 @@ const Notifications = ({ userData }) => {
       .then((res) => res.json())
       .then(({ data }) => {
         setNotifications(data?.notifications ?? []);
+
+        console.log("Init Notif", prevCountRef.current, notifications.length)
+
+        if (prevCountRef.current !== data?.notifications?.length && data?.notifications?.some((item) => item.status === "Unread")) {
+        console.log("Init Notifying", prevCountRef.current, notifications.length)
+          audioRef.current.currentTime = 0;
+          audioRef.current.play();
+
+        }
+
+        prevCountRef.current = data?.notifications?.length || 0
 
         setTimeout(() => initiateAdminData(), 5000);
       })
@@ -126,6 +152,7 @@ const Notifications = ({ userData }) => {
 
   useEffect(() => {
     const parsedData = JSON.parse(userData ?? "{}");
+    if (!parsedData) return;
     if (parsedData.role === "Provider" || parsedData.role === "Customer") {
       initiateData();
 
@@ -141,7 +168,7 @@ const Notifications = ({ userData }) => {
   return (
     <Popover align="right">
       <PopoverTrigger asChild>
-        <Button variant="ghost" className="relative">
+        <Button variant="ghost" className={`relative ${isLanding ? "text-white" : ""}`}>
           <Bell />
           {hasNewNotifs && <div className="w-2 h-2 absolute right-1 top-1 rounded-full bg-green-500" />}
         </Button>

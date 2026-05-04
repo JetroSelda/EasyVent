@@ -26,7 +26,7 @@ import { Ellipsis } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-const UsersTable = ({ searchFilter }) => {
+const UsersTable = ({ searchFilter, setSelectedUser }) => {
   const [usersList, setUsersList] = useState([]);
 
   const parseUsersData = ({ users = [], error }) => {
@@ -37,6 +37,7 @@ const UsersTable = ({ searchFilter }) => {
     const parsedData = users.map((item) => ({
       ...item,
       contacts: JSON.parse(item.contacts ?? "[]"),
+      documents: JSON.parse(item.documents ?? "{}"),
       display_picture: `${import.meta.env.VITE_API_URL}/uploads/${item.display_picture}`,
       name: [item.personal_name, item.last_name].filter(Boolean).join(" "),
     }));
@@ -117,10 +118,20 @@ const UsersTable = ({ searchFilter }) => {
       .catch(handleFetchError);
   };
 
+  const openProfile = (user) => {
+    setSelectedUser(user)
+  };
+
   const filteredUser = usersList.filter((item) =>
     item.name?.toLowerCase()?.includes(searchFilter?.toLowerCase()) ||
     item.email?.toLowerCase()?.includes(searchFilter?.toLowerCase())
-  )
+  );
+
+  const sorted = [...(filteredUser || [])].sort((a, b) => {
+    if (a.status === "Verification" && b.status !== "Verification") return -1;
+    if (a.status !== "Verification" && b.status === "Verification") return 1;
+    return 0;
+  });
 
   return (
     <Card className="p-0 rounded-md">
@@ -135,7 +146,7 @@ const UsersTable = ({ searchFilter }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUser.map((user) => (
+            {sorted.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium px-5 py-2 h-[3.5rem]">
                   <div className="w-[90%] overflow-hidden text-ellipsis">
@@ -163,8 +174,12 @@ const UsersTable = ({ searchFilter }) => {
                           <Command>
                             <CommandList>
                               <CommandGroup>
-
-                                {(user.status !== "Blocked") && (
+                                {user.status === "Verification" && (
+                                  <CommandItem onSelect={() => openProfile(user)}>
+                                    View Profile
+                                  </CommandItem>
+                                )}
+                                {(user.status === "Active") && (
                                   <CommandItem onSelect={() => handleBlockUser(user)}>
                                     Block User
                                   </CommandItem>

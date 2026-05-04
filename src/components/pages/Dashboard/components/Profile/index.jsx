@@ -20,10 +20,15 @@ const Profile = () => {
 
   const onSubmit = (formValues) => {
     if (isLoading) return;
+    const userData = localStorage.getItem("user-data");
+
+    const parsedData = JSON.parse(userData);
+
+    const initDocs = parsedData.documents;
 
     setIsLoading(true);
     const formData = new FormData();
-    const { id, file, personal_name, last_name, email, date_of_birth, bio, contacts = [], payments = [] } = formValues;
+    const { id, file, personal_name, last_name, email, date_of_birth, bio, contacts = [], payments = [], status, documents = {} } = formValues;
 
     formData.append("personal_name", personal_name);
     formData.append("last_name", last_name);
@@ -34,6 +39,13 @@ const Profile = () => {
     
     formData.append("contacts", JSON.stringify(contacts));
     formData.append("payments", JSON.stringify(payments));
+    formData.append("documents", JSON.stringify(documents));
+
+    console.log("ReSubmitting", initDocs, documents);
+
+    if (status === "Rejected" && JSON.stringify(initDocs) !== JSON.stringify(documents)) {
+      formData.append("status", "Verification");
+    }
 
     if (file) formData.append("file", file);
 

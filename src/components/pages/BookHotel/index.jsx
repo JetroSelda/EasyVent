@@ -390,7 +390,7 @@ const BookHotel = () => {
                   <div className="relative mb-5 h-[12rem] shadow-md border-1 rounded-sm overflow-hidden">
                     {geocode && <MapLocation name={property_name} rate={0} geocode={geocode} zoom={13} />}
 
-                    <div onClick={() => setMapEnabled(true)} className="opacity-0 cursor-pointer hover:opacity-100 absolute top-0 left-0 w-full h-full z-[5] bg-[#000000AA] text-white flex items-center justify-center">
+                    <div onClick={() => setMapEnabled(true)} className="opacity-0 cursor-pointer hover:opacity-100 absolute top-0 left-0 w-full h-full z-[0] bg-[#000000AA] text-white flex items-center justify-center">
                       View Location on Map
                     </div>
                   </div>
@@ -453,14 +453,14 @@ const BookHotel = () => {
       <FooterSection />
 
       {mapEnabled && (
-        <div onClick={() => setMapEnabled(false)} className="fixed top-0 left-0 w-[100vw] h-[100vh] px-[10rem] py-10 bg-[#000000AA] backdrop-blur-xs z-[10]">
+        <div onClick={() => setMapEnabled(false)} className="fixed top-0 left-0 w-[100vw] h-[100vh] px-[10rem] py-10 bg-[#000000AA] backdrop-blur-xs z-[1000]">
           <div onClick={(event) => event.stopPropagation()} className="h-full">
             <MapLocation name={property_name} rate={0} geocode={geocode} zoom={13} />
           </div>
         </div>)}
 
       <Dialog open={!!enabledPackages} onOpenChange={setEnabledPackages}>
-        <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-auto">
+        <DialogContent className="sm:max-w-[700px] max-h-[85vh] z-[1000] overflow-auto">
           <PackagesSelection serviceState={serviceState} serviceId={id} packages_list={packages_list} />
         </DialogContent>
       </Dialog>

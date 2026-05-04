@@ -113,11 +113,14 @@ const InvitationForm = ({ onClose }) => {
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import VerifyUser from "./component/VerifyUser";
 
 const AdminPage = () => {
   const [userData, setUserData] = useState({});
   const [currentTab, setCurrentTab] = useState("users");
   const [enabledInvite, setEnabledInvite] = useState(false);
+
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -136,6 +139,8 @@ const AdminPage = () => {
 
   if (!userData.id) return;
 
+  if (selectedUser) return <VerifyUser user={selectedUser} onSubmit={() => setSelectedUser(null)} />
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       <div className="flex items-center justify-between">
@@ -151,7 +156,7 @@ const AdminPage = () => {
 
         <Button onClick={openInviteForm} type="button" className="bg-[#183B4E] hover:bg-[#2e5e78] ml-auto w-[8rem]"><UserPlus /> Invite Users</Button>
       </div>
-      <UsersTable searchFilter={searchQuery} />
+      <UsersTable searchFilter={searchQuery} setSelectedUser={setSelectedUser} />
 
       <Dialog open={!!enabledInvite} onOpenChange={setEnabledInvite}>
         <DialogContent className="sm:max-w-[355px] max-h-[85vh] overflow-auto">

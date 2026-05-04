@@ -15,6 +15,7 @@ import { toast } from "sonner";
 const ContactPage = () => {
   const [formState, setFormState] = useState({});
   const [isLoading, setIsloading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const { personal_name, last_name, email, title, description } = formState;
 
@@ -24,6 +25,11 @@ const ContactPage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (submitted) {
+      toast("Submission", { description: "You have already submitted!" });
+      return;
+    }
 
     if (isLoading) return;
     setIsloading(true);
@@ -41,8 +47,9 @@ const ContactPage = () => {
       .then((res) => res.json())
       .then(({ data }) => {
         toast(data.title, { description: data.message });
-        setIsloading(false);
         setFormState({});
+        setIsloading(false);
+        setSubmitted(true);
       })
   }
 

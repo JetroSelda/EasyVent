@@ -111,6 +111,8 @@ const CalendarForm = ({ userState }) => {
       })
   }
 
+  console.log("Schedules", scheds);
+
   useEffect(() => initateData(), [])
 
   return (
@@ -158,7 +160,9 @@ const CalendarForm = ({ userState }) => {
             {calendarDates.map((dateObj) => {
               const dateText = dateObj.date.getDate();
               const className = dateObj.currentMonth ? "h-[10rem] p-3 border-r-1 border-t-1" : "h-[10rem] p-3 border-r-1 border-t-1 text-gray-500"
-              const dateScheds = scheds.filter((schedItem) => schedItem.schedule === formatISODate(dateObj.date));
+              
+              const dateScheds = scheds.filter((schedItem) => schedItem.schedule?.slice(0, 10) === formatISODate(dateObj.date));
+
               return (
                 <div className={className}>
                   {dateText}

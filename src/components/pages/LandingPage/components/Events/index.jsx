@@ -110,17 +110,6 @@ const Events = ({ services = [] }) => {
       <EventTabs updateEventTab={setSelectedTab} />
 
       <div className="relative">
-        <div className="flex items-center gap-2 absolute top-5 right-0">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline"><ChevronsUpDown /> Sort By</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-60 overflow-auto p-0">
-              <p onClick={() => setSortBy("price")} className="p-4 py-3 border-b-1">Price</p>
-              <p onClick={() => setSortBy("rate")} className="p-4 py-3">Top Rated</p>
-            </PopoverContent>
-          </Popover>
-        </div>
 
         {(!selectedTab || selectedTab === "hotels") && (
           <>
@@ -138,7 +127,7 @@ const Events = ({ services = [] }) => {
 
         {(!selectedTab || selectedTab === "functionHalls") && (
           <>
-            <p className="font-title font-bold text-[1.3rem] pb-4 pt-5 px-3">Function Halls</p>
+            <p className="font-title font-bold text-[1.3rem] pb-4 pt-5 px-3">Travel Agencies</p>
             <Slider list={functionHalls} />
           </>
         )}

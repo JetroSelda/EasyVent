@@ -6,9 +6,21 @@ import { useState } from "react";
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom";
 
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field"
+
 const ProviderForm = () => {
   const [userState, setUserState] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+
+  const [termsIsChecked, setTermsIsChecked] = useState(false);
 
   const [isOTPForm, setIsOTPForm] = useState(false);
 
@@ -78,6 +90,8 @@ const ProviderForm = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const formData = new FormData();
     formData.append("email", email);
 
@@ -92,6 +106,7 @@ const ProviderForm = () => {
 
     setCorrectOTP(otp);
     setIsOTPForm(true);
+    setIsLoading(false);
   }
 
   if (isOTPForm) {
@@ -168,7 +183,24 @@ const ProviderForm = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Field orientation="horizontal">
+          <Checkbox
+            id="terms-checkbox-2"
+            name="terms-checkbox-2"
+            onClick={() => setTermsIsChecked((prev) => !prev)}
+            checked={termsIsChecked}
+          />
+          <FieldContent>
+            <FieldLabel htmlFor="terms-checkbox-2">
+              Accept terms and conditions
+            </FieldLabel>
+            <FieldDescription>
+              By clicking this checkbox, you agree to our the <a href="/terms" target="_blank">Terms & Conditions</a> and <a href="/policy" target="_blank">Privacy Policy</a>.
+            </FieldDescription>
+          </FieldContent>
+        </Field>
+
+        <Button type="submit" className="w-full" disabled={isLoading || !termsIsChecked}>
           Create Account
         </Button>
       </div>

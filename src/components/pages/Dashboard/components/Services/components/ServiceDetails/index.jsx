@@ -8,7 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { BadgeCheckIcon, CircleOff, Edit3, FileInput, Lock, MapPin, ShieldEllipsis, SquarePen } from "lucide-react";
+import { BadgeCheckIcon, CircleOff, CirclePlus, Download, Edit3, FileInput, Lock, MapPin, ShieldEllipsis, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -19,14 +19,86 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Checkbox } from "@/components/ui/checkbox";
+
 import { getServiceData } from "../../../../../../../api/services";
 import Details from "./Details";
 import Bookings from "./Bookings";
 
 import { Badge } from "@/components/ui/badge";
+import xlsx from "json-as-xlsx";
+import { formatCurrency } from "../../../../../../../api/util";
 
+const StatusFilter = ({ onSubmit, defaultValues = [] }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState([]);
+  const statusList = ["Pending", "Confirmed", "Paid", "Rejected"];
+
+  const handleOnChange = (value) => {
+    setIsOpen(value);
+
+    if (!value) onSubmit(selected)
+  }
+
+  const onChange = (value) => {
+    setSelected((prev) => {
+      const updated =  prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value];
+      
+      return updated;
+    });
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={handleOnChange}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="h-8"><CirclePlus /> Status</Button>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-[200px] p-0">
+        <Command>
+          <CommandInput placeholder="Search status..." className="h-9" />
+          <CommandList>
+            <CommandEmpty>No status found.</CommandEmpty>
+            <CommandGroup>
+
+              {statusList.map((item) => {
+                return (
+                  <CommandItem
+                    key={item}
+                    value={item}
+                    onSelect={(currentValue) => {
+                      onChange(currentValue);
+                    }}
+                  >
+                    <Checkbox checked={selected.includes(item)} /> {item}
+                  </CommandItem>
+                )
+              })}
+              
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  )
+}
 
 const ServiceDetails = () => {
+  const [currTab, setCurrTab] = useState();
+  const [statusFilter, setStatusFilter] = useState([]);
   const { state = {} } = useLocation();
   const navigate = useNavigate();
   const [serviceState, setServiceState] = useState({});
@@ -74,6 +146,65 @@ const ServiceDetails = () => {
 
   const formattedLocation = ["Philippines", province, city, barangay, street, building_no].filter(Boolean).join(", ");
   const selectedUrl = images_url[selectedImageIndx];
+
+  const downloadProvTrans = async () => {
+    const userData = localStorage.getItem("user-data");
+    const user = JSON.parse(userData);
+    const formData = new FormData();
+    formData.append("userId", user.id);
+    const request = await fetch(`${import.meta.env.VITE_API_URL}/services/allBookings.php`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const response = await request.json();
+
+    const { data } = response;
+    const bookings = data?.bookings ?? [];
+
+    const parsedData = bookings
+      .filter((item) => item.id_service === serviceState?.id)  
+      .map((item) => {
+        const packageItem = JSON.parse(item.package_item ?? "{}");
+
+        return ({
+          id: `Transaction${String(item.id)?.padStart(4, "0")}`,
+          service_name: item.property_name,
+          customer_name: [item.personal_name, item.last_name].join(" "),
+          customer_email: item.email,
+          schedule: item.schedule,
+          package: packageItem.package_name,
+          price: formatCurrency(packageItem.price),
+          status: item.status,
+        });
+      })
+
+    let excelData = [
+      {
+        sheet: "Transaction History",
+        columns: [
+          { label: "Transaction ID", value: "id" },
+          { label: "Service", value: "service_name" },
+          { label: "Customer", value: "customer_name" },
+          { label: "Customer Email", value: "customer_email" },
+          { label: "Booking Date", value: "schedule" },
+          { label: "Booking Package", value: "package" },
+          { label: "Booking Price", value: "price" },
+          { label: "Status", value: "status" },
+        ],
+        content: parsedData,
+      },
+    ]
+
+    let settings = {
+      fileName: "TRANSACTION_HISTORY", 
+      extraLength: 3,
+      writeMode: "writeFile",
+      writeOptions: {},
+    }
+
+    xlsx(excelData, settings);
+  };
 
   
   return (
@@ -135,7 +266,7 @@ const ServiceDetails = () => {
       </div>
 
       <div className="md:w-[65%] px-5">
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between items-start mb-4">
           <div className="flex flex-col justify-between">
             <p className="font-title font-bold text-[2rem] mb-1">{property_name}</p>
 
@@ -204,7 +335,16 @@ const ServiceDetails = () => {
             </div>
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex items-center gap-3 pt-2">
+            <div className="ml-auto w-full md:w-auto">
+              <Button
+                onClick={downloadProvTrans}
+                type="button"
+                variant="outline"
+                className="h-8 w-full md:w-auto"
+              ><Download />Export Transactions</Button>
+            </div>
+
             <Button onClick={editService} className="bg-[#183B4E] hover:bg-[#2e5e78]"><Edit3 /> Edit Service</Button>
           </div>
         </div>
@@ -224,10 +364,20 @@ const ServiceDetails = () => {
         )}
 
         <Tabs defaultValue="details">
-          <TabsList>
-            <TabsTrigger value="details">Event Details</TabsTrigger>
-            <TabsTrigger value="bookings">Event Bookings</TabsTrigger>
-          </TabsList>
+          <div className="flex justify-between">
+            
+            <TabsList>
+              <TabsTrigger value="details" onClick={() => {
+                setCurrTab("details");
+                setStatusFilter([]);
+              }}>Listing Details</TabsTrigger>
+              <TabsTrigger value="bookings" onClick={() => setCurrTab("bookings")}>Bookings</TabsTrigger>
+            </TabsList>
+
+            {currTab === "bookings" && (
+              <StatusFilter onSubmit={setStatusFilter} />
+            )}
+          </div>
           <TabsContent value="details">
             <Details
               property_description={property_description}
@@ -237,7 +387,7 @@ const ServiceDetails = () => {
             />
           </TabsContent>
           <TabsContent value="bookings">
-            <Bookings service={serviceState} />
+            <Bookings service={serviceState} statusFilter={statusFilter} />
           </TabsContent>
         </Tabs>
       </div>

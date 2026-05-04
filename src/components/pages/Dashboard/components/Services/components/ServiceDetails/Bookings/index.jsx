@@ -365,7 +365,7 @@ const PaymentForm = ({ defaultValue, refetch }) => {
   )
 };
 
-const Bookings = ({ service = {} }) => {
+const Bookings = ({ service = {}, statusFilter }) => {
   const [bookingList, setBookingList] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState();
   const [rejectingBooking, setRejectingBooking] = useState();
@@ -408,16 +408,20 @@ const Bookings = ({ service = {} }) => {
     const userData = localStorage.getItem("user-data");
     const parsedUser = JSON.parse(userData);
 
+    const confirmMessage = parsedUser.bio;
+
     const { property_name } = service;
     const { id_customer, personal_name, last_name, display_picture } = selected;
 
     formData.append("user1Id", parsedUser.id);
     formData.append("user1Name", property_name);
     formData.append("user1Image", parsedUser.display_picture);
+    formData.append("confirm_message", confirmMessage);
 
     formData.append("user2Id", id_customer);
     formData.append("user2Name", [personal_name, last_name].filter(Boolean).join(" "));
     formData.append("user2Image", display_picture);
+    formData.append("currStatus", selected.status);
 
     fetch(`${import.meta.env.VITE_API_URL}/booking/confirmBooking.php`, {
       method: "POST",
@@ -434,6 +438,8 @@ const Bookings = ({ service = {} }) => {
   useEffect(() => {
     fetchBookingList();
   }, []);
+
+  const filteredList = bookingList.filter((item) => !statusFilter?.length || statusFilter.includes(item.status))
   return (
     <Card className="p-0 rounded-md">
       <CardContent className="p-0">
@@ -447,7 +453,7 @@ const Bookings = ({ service = {} }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {bookingList.map((booking) => (
+            {filteredList.map((booking) => (
               <TableRow key={booking.invoice}>
                 <TableCell className="font-medium px-5 py-2">
                   <div className="w-[90%] overflow-hidden text-ellipsis">
@@ -476,7 +482,7 @@ const Bookings = ({ service = {} }) => {
                                 Open Booking
                               </CommandItem>
 
-                              {booking.status === "Pending" && (
+                              {(booking.status === "Pending" || booking.status === "Rescheduled") && (
                                 <CommandItem
                                   onSelect={() => {
                                     bookingConfirmation(booking);
@@ -486,7 +492,7 @@ const Bookings = ({ service = {} }) => {
                                 </CommandItem>
                               )}
 
-                              {booking.status === "Pending" && (
+                              {(booking.status === "Pending" || booking.status === "Rescheduled") && (
                                 <CommandItem
                                   onSelect={() => {
                                     setRejectingBooking(booking);

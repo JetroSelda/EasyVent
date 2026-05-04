@@ -14,7 +14,7 @@ const ProfileSetup = () => {
 
     setIsLoading(true);
     const formData = new FormData();
-    const { id, file, personal_name, last_name, email, date_of_birth, bio, contacts = [], payments } = formValues;
+    const { id, file, personal_name, last_name, email, date_of_birth, bio, contacts = [], payments, documents = {} } = formValues;
 
     formData.append("personal_name", personal_name);
     formData.append("last_name", last_name);
@@ -25,7 +25,16 @@ const ProfileSetup = () => {
     
     formData.append("contacts", JSON.stringify(contacts));
     formData.append("payments", payments ? JSON.stringify(payments) : "[]");
-    formData.append("status", state.role === "Provider" ? "Pending" : "Active");
+    if (state.role === "Provider") {
+      if (!documents.dti?.url && !documents.bir?.url && !documents.permit?.url && !documents.clr?.url) {
+        toast("Missing info", {
+          description: "Please provide required documents.",
+        });
+        return;
+      }
+      formData.append("documents", JSON.stringify(documents || {}));
+    }
+    formData.append("status", state.role === "Provider" ? "Verification" : "Active");
 
     if (file) formData.append("file", file);
 
@@ -42,7 +51,7 @@ const ProfileSetup = () => {
           return;
         }
 
-        if (state.role === "Provider") return navigate("/listing", { state: { id_user: id } });
+        if (state.role === "Provider") return navigate("/verification", { state: { id_user: id } });
 
         if (data) {
           const todayDate = new Date();

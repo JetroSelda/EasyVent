@@ -46,6 +46,7 @@ import BPILOGO from "@/assets/images/bpi_logo.png";
 import GCASHLOGO from "@/assets/images/gcash_logo.png";
 import LANDBANKLOGO from "@/assets/images/landbank_logo.png";
 import { toast } from "sonner";
+import MapLocation from "../../../../../BookHotel/components/MapLocation";
 
 const PAYMENTS_LOGO = {
   BDO: BDOLOGO,
@@ -57,6 +58,78 @@ const PAYMENTS_LOGO = {
 const CONTACT_ICONS = {
   Landline: Phone,
   Mobile: Smartphone,
+};
+
+function dateDifference(date1, date2) {
+  const startDate = new Date(date1);
+  const endDate = new Date(date2);
+
+  const differenceInMs = endDate - startDate;
+
+  const msInADay = 1000 * 60 * 60 * 24;
+  const differenceInDays = differenceInMs / msInADay;
+
+  return Math.abs(differenceInDays); // Absolute value in case of negative difference
+}
+
+
+const ScheduleForm = ({ defaultValue, refresh }) => {
+  const [formState, setFormState] = useState(defaultValue.schedule || "");
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeForm, setActiveForm] = useState(false);
+
+  const currDate = new Date();
+  const scheduleDate = new Date(formState);
+
+  const dateDiff = dateDifference(scheduleDate, currDate);
+
+  console.log("DateDIff", defaultValue);
+
+  const readOnly = dateDiff < 5;
+
+  const handleSubmit = () => {
+    if (defaultValue.schedule.startsWith(formState)) return;
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    const formData = new FormData();
+
+    formData.append("id", defaultValue.id);
+    formData.append("schedule", `${formState} 00:00:00`);
+    formData.append("providerId", defaultValue.providerId)
+
+    fetch(`${import.meta.env.VITE_API_URL}/booking/reschedBooking.php`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setIsLoading(false);
+        setActiveForm(false);
+        refresh();
+      })
+  }
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setFormState(value);
+    setActiveForm(true);
+  }
+
+  return (
+    <div className="grid gap-3 py-3">
+      <Label className="text-lg pb-0">Schedule</Label>
+
+      <Input readOnly={readOnly} value={formState?.slice(0, 10)} onChange={handleChange} type="date" />
+
+      {defaultValue.status === "Confirmed" && (
+        <Button type="button" disabled={isLoading || !activeForm || readOnly} onClick={handleSubmit}>
+          {isLoading && <Spinner />} Reschedule
+        </Button>
+      )}
+    </div>
+  )
 };
 
 const FeedbackForm = ({ defaultValue = {} }) => {
@@ -160,9 +233,14 @@ const FeedbackForm = ({ defaultValue = {} }) => {
   )
 };
 
-const BookingForm = ({ defaultValue = {} }) => {
-  const { property_name, email, contacts = [], package_item: packageItem, status, reason } = defaultValue;
+const BookingForm = ({ defaultValue = {}, refresh }) => {
+  const { property_name, email, contacts = [], package_item: packageItem, status, reason, location = {} } = defaultValue;
   const displayPicture = `${import.meta.env.VITE_API_URL}/uploads/${defaultValue.display_picture}`;
+
+  const { province, city, barangay, street, building_no, zip_code, geocode } = location;
+  const formattedLocation = [building_no, street, barangay, city, province].filter(Boolean).join(", ");
+
+  console.log("Booking Form State", defaultValue, geocode);
 
   return (
     <form>
@@ -191,6 +269,8 @@ const BookingForm = ({ defaultValue = {} }) => {
                     {contacts.map((contact) => {
                       const IconComponent = CONTACT_ICONS[contact.type];
 
+                      if (!IconComponent) return null;
+
                       return (
                         <div className="flex gap-2 items-center italic">
                           <IconComponent size={15} /> {contact.value}
@@ -205,6 +285,10 @@ const BookingForm = ({ defaultValue = {} }) => {
                 </p>
               </CardContent>
             </Card>
+
+            <ScheduleForm defaultValue={defaultValue} refresh={refresh} />
+
+            <hr className="mt-5 mb-3" />
 
             {defaultValue.status !== "Pending" && <FeedbackForm defaultValue={defaultValue} />}
           </div>
@@ -281,6 +365,17 @@ const BookingForm = ({ defaultValue = {} }) => {
                 </div>
               </CardContent>
             </Card>
+
+            <div className="py-3">
+              <p className="font-semibold mb-1">Service Address</p>
+              <a className={geocode?.length === 2 ? "underline" : ""} target="_blank" href={geocode?.length === 2 ? `https://www.google.com/maps?q=${geocode[0]},${geocode[1]}` : null}>{formattedLocation}</a>
+
+              {geocode && (
+                <div className="h-[30rem] py-4">
+                  <MapLocation name={property_name} rate={0} geocode={geocode} zoom={13} />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -511,7 +606,7 @@ const BookingTable = ({ bookingList = [], refresh }) => {
       <Dialog open={!!selectedBooking} onOpenChange={setSelectedBooking}>
         <DialogContent className="sm:max-w-[855px] max-h-[85vh] overflow-auto">
           {!!selectedBooking && (
-            <BookingForm defaultValue={selectedBooking} />
+            <BookingForm defaultValue={selectedBooking} refresh={refresh} />
           )}
         </DialogContent>
       </Dialog>

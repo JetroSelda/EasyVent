@@ -24,7 +24,7 @@ import { toast } from "sonner";
 const StatusFilter = ({ onSubmit, defaultValues = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState([]);
-  const statusList = ["Published", "Draft", "Deactivated"];
+  const statusList = ["Pending", "Confirmed", "Paid", "Rejected"];
 
   const handleOnChange = (value) => {
     setIsOpen(value);
@@ -75,62 +75,9 @@ const StatusFilter = ({ onSubmit, defaultValues = [] }) => {
   )
 }
 
-const CategoryFilter = ({ onSubmit }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [selected, setSelected] = useState([]);
-  const categoryList = ["Hotel/Resort", "Restaurant", "Function Hall", "Independent Provider"];
-
-  const handleOnChange = (value) => {
-    setIsOpen(value);
-
-    if (!value) onSubmit(selected);
-  }
-
-  const onChange = (value) => {
-    setSelected((prev) => {
-      const updated =  prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value];
-      
-      return updated;
-    });
-  }
-
-  return (
-    <Popover open={isOpen} onOpenChange={handleOnChange}>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="h-8"><CirclePlus /> Category</Button>
-      </PopoverTrigger>
-
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search category..." className="h-9" />
-          <CommandList>
-            <CommandEmpty>No category found.</CommandEmpty>
-            <CommandGroup>
-
-              {categoryList.map((item) => {
-                return (
-                  <CommandItem
-                    key={item}
-                    value={item}
-                    onSelect={(currentValue) => {
-                      onChange(currentValue);
-                    }}
-                  >
-                    <Checkbox checked={selected.includes(item)} /> {item}
-                  </CommandItem>
-                )
-              })}
-              
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  )
-}
-
 const Bookings = () => {
   const [bookingList, setBookingList] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("");
 
   const fetchBookingList = () => {
     const userData = localStorage.getItem("user-data");
@@ -155,6 +102,7 @@ const Bookings = () => {
           ...item,
           package_item: JSON.parse(item.package_item ?? "{}"),
           contacts: JSON.parse(item.contacts ?? "[]"),
+          location: JSON.parse(item.location ?? "{}"),
         }));
 
         setBookingList(parsedBookings);
@@ -168,14 +116,14 @@ const Bookings = () => {
     fetchBookingList();
   }, []);
 
-  const filteredList = bookingList;
+  console.log("StatusFilter", statusFilter, bookingList)
 
-  const updateStatusFilter = () => {
+  const filteredList = bookingList.filter((item) => {
+    return !statusFilter?.length || statusFilter.includes(item.status);
+  });
 
-  }
-
-  const updateCategoryFilter = () => {
-
+  const updateStatusFilter = (value) => {
+    setStatusFilter(value)
   }
 
   return (
@@ -192,8 +140,6 @@ const Bookings = () => {
         </div>
 
         <StatusFilter onSubmit={updateStatusFilter} />
-        
-        <CategoryFilter onSubmit={updateCategoryFilter} />
       </div>
       
       <BookingTable bookingList={filteredList} refresh={fetchBookingList} />

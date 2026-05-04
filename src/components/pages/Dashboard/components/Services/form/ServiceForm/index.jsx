@@ -188,7 +188,11 @@ const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
     if (category === "Independent Provider" && !independent_locations?.length) return toast("Missing Data", { description: "Please add atleast 1 covered location" });
     
     if (!packages_list?.length) return toast("Missing Data", { description: "Please add atleast 1 package item" });
-    setEnabledDocuments(true);
+    if (id) {
+      updateService("Published");
+    } else {
+      createService("Published");
+    }
   }
 
   const requestPublish = (documents) => {
@@ -219,13 +223,36 @@ const ServiceForm = ({ initialListing, onSubmit, defaultValue = {} }) => {
 
   const handleDeactivate = () => {
     if (id) {
-      updateService("Deactivated");
+      if (!id) return;
+      const formData = new FormData();
+
+      formData.append("serviceId", id);
+
+      fetch(`${import.meta.env.VITE_API_URL}/booking/serviceBooking.php`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then(({ data = {} }) => {
+          const { bookings = [] } = data;
+
+          const confirmed = bookings.filter((item) => item.status === "Confirmed");
+
+          if (confirmed.length) {
+            toast("Can't Proceed!", { description: "There are still ongoing bookings remaining in the Service!" });
+            return;
+          }
+          
+          updateService("Deactivated");
+          
+        })
+        .catch((error) => {
+          toast("Something Went Wrong!", { description: error.message });
+        })
     } else {
       createService("Deactivated");
     }
   }
-
-  console.log("Current Form State", formState);
 
   return (
     <div className="px-5">

@@ -53,10 +53,10 @@ const LoginForm = ({
             ...data,
             contacts: JSON.parse(data.contacts ?? "[]"),
             payments: JSON.parse(data.payments ?? "[]"),
+            documents: JSON.parse(data.documents ?? "documents"),
           };
 
           if (data.status === "Pending") return navigate("/listing", { state: { id_user: data.id } });
-          if (data.status === "Verification") return navigate("/verification");
 
           const todayDate = new Date();
           todayDate.setDate(todayDate.getDate() + 1);

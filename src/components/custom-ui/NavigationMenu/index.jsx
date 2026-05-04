@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/sheet"
 import { useState } from "react";
 
-const NavigationMenu = () => {
+import Logo from "@/assets/easy-logo.png";
+import { NavUser } from "../../ui/nav-user";
+
+const NavigationMenu = ({ isLanding }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -32,11 +35,13 @@ const NavigationMenu = () => {
   ]
 
   return (
-    <div className="w-[100%] flex h-[3.8rem] shadow-2xs bg-white justify-between items-center-safe px-8 sticky z-[10] top-[0px]">
-      <div></div>
+    <div className={`w-[100%] ${isLanding ? "bg-transparent absolute top-0 left-0" : "bg-white shadow-2xs"} flex h-[3.8rem] justify-between items-center-safe px-8 z-[10]`}>
+      <div>
+        <img src={Logo} className="w-20" />
+      </div>
 
       <div className="flex gap-3">
-        <div className="md:flex gap-2 items-center-safe hidden">
+        <div className={`md:flex gap-2 items-center-safe hidden ${isLanding ? "text-white" : ""}`}>
           <Button variant="ghost" onClick={() => navigate("/")}>Home</Button>
           
           <Button variant="ghost" onClick={() => navigate("/about")}>About</Button>
@@ -48,10 +53,12 @@ const NavigationMenu = () => {
           <Button variant="ghost" onClick={() => navigate("/terms")}>Terms & Conditions</Button>
         </div>
 
-        {userData && <Notifications userData={userData} />}
+        {userData && <Notifications isLanding={isLanding} userData={userData} />}
 
         {!userData && <Button className="bg-[#183B4E] hover:bg-[#2e5e78]" onClick={navigateLogin}>Log In <LogIn /> </Button>}
-        {userData && <Button className="bg-[#183B4E] hover:bg-[#2e5e78]" onClick={navigateDashboard}>Dashboard </Button>}
+        {userData && (
+          <NavUser user={userData} />
+        )}
 
         <div className="md:hidden">
           <Sheet open={open} onOpenChange={setOpen}>

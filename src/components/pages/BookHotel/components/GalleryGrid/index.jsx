@@ -17,13 +17,13 @@ const GalleryGrid = ({ imagesUrl = []}) => {
           <div onClick={() => setSelectedImage(1)} class="overflow-hidden h-[10rem] rounded-sm hover:shadow-2xl cursor-pointer">
             <img src={images[1]} alt="" className="w-full h-full" />
           </div>
-          <div onClick={() => setSelectedImage(2)} class="overflow-hidden rounded-sm hover:shadow-2xl cursor-pointer">
+          <div onClick={() => setSelectedImage(2)} class="overflow-hidden h-[10rem] rounded-sm hover:shadow-2xl cursor-pointer">
             <img src={images[2]} alt="" className="w-full h-full" />
           </div>
-          <div onClick={() => setSelectedImage(3)} class="overflow-hidden rounded-sm hover:shadow-2xl cursor-pointer">
+          <div onClick={() => setSelectedImage(3)} class="overflow-hidden h-[10rem] rounded-sm hover:shadow-2xl cursor-pointer">
             {images[3] && <img src={images[3]} alt="" className="w-full h-full" />}
           </div>
-          <div onClick={() => setSelectedImage(4)} class="overflow-hidden rounded-sm hover:shadow-2xl cursor-pointer">
+          <div onClick={() => setSelectedImage(4)} class="overflow-hidden h-[10rem] rounded-sm hover:shadow-2xl cursor-pointer">
             {images[4] && <img src={images[4]} alt="" className="w-full h-full" />}
           </div>
         </div>

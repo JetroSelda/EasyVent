@@ -66,7 +66,7 @@ const CategorySelection = ({ onClick }) => {
                 <Landmark size={50} />
               </div>
               <div className="w-[70%]">
-                <div className="font-title font-bold text-[1.2rem]">Function Hall</div>
+                <div className="font-title font-bold text-[1.2rem]">Travel Agencies</div>
                 <p className="text-[0.9rem] text-gray-500">
                   A place where a special occasion or event can be held. These venues can range from large spacious convention centers to small
                   intimate banquet halls.

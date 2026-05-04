@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Building2, CalendarPlus, CirclePlus, Ellipsis, Funnel, HandPlatter, Landmark, Plus, Search, SlidersHorizontal, Star, Users } from "lucide-react";
+import { Building2, CalendarPlus, CirclePlus, Download, Ellipsis, Funnel, HandPlatter, Landmark, Plus, Search, SlidersHorizontal, Star, Users } from "lucide-react";
 import ServicesTable from "./components/ServicesTable";
 import { useEffect, useState } from "react";
 
@@ -12,6 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+import { AlertTriangleIcon } from "lucide-react"
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +37,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox";
+import xlsx from "json-as-xlsx";
+import { formatCurrency } from "../../../../../api/util";
 
 const CategorySelection = () => {
   const navigate = useNavigate();
@@ -88,7 +97,7 @@ const CategorySelection = () => {
                 <Landmark size={50} />
               </div>
               <div className="w-[70%]">
-                <div className="font-title font-bold text-[1.2rem]">Function Hall</div>
+                <div className="font-title font-bold text-[1.2rem]">Travel Agencies</div>
                 <p className="text-[0.9rem] text-gray-500">
                   A place where a special occasion or event can be held. These venues can range from large spacious convention centers to small
                   intimate banquet halls.
@@ -234,6 +243,9 @@ const Services = () => {
   const [statusFilter, setStatusFilter] = useState([]);
   const [searchFilter, setSearchFilter] = useState("");
 
+  const userCache = localStorage.getItem("user-data");
+  const parsedCache = JSON.parse(userCache ?? "{}");
+
   const handleCreate = () => {
     setEnabledCategory(true);
   };
@@ -300,6 +312,63 @@ const Services = () => {
     fetchServices()
   }, []);
 
+  const downloadProvTrans = async () => {
+    const userData = localStorage.getItem("user-data");
+    const user = JSON.parse(userData);
+    const formData = new FormData();
+    formData.append("userId", user.id);
+    const request = await fetch(`${import.meta.env.VITE_API_URL}/services/allBookings.php`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const response = await request.json();
+
+    const { data } = response;
+    const bookings = data?.bookings ?? [];
+
+    const parsedData = bookings.map((item) => {
+      const packageItem = JSON.parse(item.package_item ?? "{}");
+
+      return ({
+        id: `Transaction${String(item.id)?.padStart(4, "0")}`,
+        service_name: item.property_name,
+        customer_name: [item.personal_name, item.last_name].join(" "),
+        customer_email: item.email,
+        schedule: item.schedule,
+        package: packageItem.package_name,
+        price: formatCurrency(packageItem.price),
+        status: item.status,
+      });
+    })
+
+    let excelData = [
+      {
+        sheet: "Transaction History",
+        columns: [
+          { label: "Transaction ID", value: "id" },
+          { label: "Service", value: "service_name" },
+          { label: "Customer", value: "customer_name" },
+          { label: "Customer Email", value: "customer_email" },
+          { label: "Booking Date", value: "schedule" },
+          { label: "Booking Package", value: "package" },
+          { label: "Booking Price", value: "price" },
+          { label: "Status", value: "status" },
+        ],
+        content: parsedData,
+      },
+    ]
+
+    let settings = {
+      fileName: "TRANSACTION_HISTORY", 
+      extraLength: 3,
+      writeMode: "writeFile",
+      writeOptions: {},
+    }
+
+    xlsx(excelData, settings);
+  };
+
   const filteredList = servicesList.filter((item) => item.property_name.toLowerCase().includes(searchFilter.toLowerCase()))
 
   return (
@@ -319,12 +388,53 @@ const Services = () => {
         
         <CategoryFilter onSubmit={updateCategoryFilter} />
 
-        <div className="ml-auto w-full md:w-auto">
-          <Button onClick={handleCreate} type="button" className="h-8 w-full md:w-auto bg-[#183B4E] hover:bg-[#2e5e78]"><CalendarPlus />Create Service</Button>
-        </div>
+        {parsedCache.status !== "Verification" && (
+          <>
+            <div className="ml-auto w-full md:w-auto">
+              <Button
+                onClick={downloadProvTrans}
+                type="button"
+                variant="outline"
+                className="h-8 w-full md:w-auto"
+              ><Download />Export Transactions</Button>
+            </div>
+
+            <div className="w-full md:w-auto">
+              <Button onClick={handleCreate} type="button" className="h-8 w-full md:w-auto bg-[#183B4E] hover:bg-[#2e5e78]"><CalendarPlus />Create Service</Button>
+            </div>
+          </>
+        )}
       </div>
       
-      <ServicesTable servicesList={filteredList} />
+      {parsedCache.status === "Active" && (
+        <ServicesTable servicesList={filteredList} />
+      )}
+
+      {parsedCache.status === "Verification" && (
+        <Alert className="border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50">
+          <AlertTriangleIcon />
+          <AlertTitle>Alert: Account Under Review</AlertTitle>
+          <AlertDescription>
+            Your account is currently under review following the submission of your business documents. This process helps ensure compliance with our verification standards and policies.
+          
+            <br />
+            During this time, some account features may be temporarily limited. We appreciate your patience and will notify you once the review has been completed or if additional information is required.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {parsedCache.status === "Rejected" && (
+        <Alert className="border-red-200 bg-red-50 text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-50">
+          <AlertTriangleIcon />
+          <AlertTitle>Alert: Listing Rejected</AlertTitle>
+          <AlertDescription>
+            Your submitted listing has been rejected after reviewing your business documents. This may be due to missing, incomplete, or invalid information provided during the submission process.
+            
+            <br />
+            Please re-check your submitted documents, ensure all required details are accurate and up to date, and resubmit them for verification. Once updated, our team will review your submission again.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Dialog open={!!enabledCategory} onOpenChange={setEnabledCategory}>
         <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-auto">

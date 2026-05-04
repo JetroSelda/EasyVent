@@ -53,16 +53,6 @@ const SearchSection = ({ bookmark = [], setSearchState, sortBy, setSortBy }) => 
 
         <DateRangePicker defaultValue={dateRange} onChange={setDateRange} />
 
-        <div className="relative md:w-[8rem]">
-          <Clock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" />
-          <Input
-            type="time"
-            placeholder="Location"
-            className="pl-10 pr-3 w-full h-9 no-icon"
-            onChange={(evt) => setTime(evt.target.value)}
-          />
-        </div>
-
         <div className="relative">
           <Users className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none" />
           <Select onValueChange={(val) => setPax(val)}>

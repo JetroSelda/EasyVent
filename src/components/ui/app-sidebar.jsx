@@ -134,9 +134,6 @@ export function AppSidebar({ onClick, ...props }) {
       <SidebarContent>
         <NavMain onClick={onClick} items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
