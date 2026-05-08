@@ -42,8 +42,10 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
 
   const submitBooking = async () => {
     const serviceUnvDates = serviceState?.availability ?? [];
+    const [date] = schedule.split("T");
+    const formattedSched = `${schedule.split("T").join(" ")}:00`;
 
-    if (serviceUnvDates.some((dateItem) => dateItem === schedule)) {
+    if (serviceUnvDates.some((dateItem) => dateItem === date)) {
       return toast("Validation Error", { description: "The selected schedule is not available" });
     }
 
@@ -59,8 +61,9 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
     const { data } = json ?? {};
     const { bookings = [] } = data ?? {};
 
+
     if (bookings?.length) {
-      if (bookings.some((dateItem) => dateItem.schedule === schedule)) {
+      if (bookings.some((dateItem) => dateItem.schedule === formattedSched)) {
         return toast("Validation Error", { description: "The selected schedule is not available" });
       }
     }
@@ -75,7 +78,7 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
     formData.append("userId", parsedUserData.id);
     formData.append("serviceId", serviceId);
     formData.append("packageItem", JSON.stringify(selectedPackage));
-    formData.append("schedule", schedule);
+    formData.append("schedule", `${formattedSched}:00`);
 
     fetch(`${import.meta.env.VITE_API_URL}/booking/create.php`, {
       method: "POST",
@@ -121,9 +124,9 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
       </DialogHeader>
 
       <div className="grid grid-cols-1 gap-5 pt-7">
-        <div className="grid gap-2 w-[9rem]">
+        <div className="grid gap-2 w-[12.5rem]">
           <Label>Schedule</Label>
-          <Input type="date" onChange={(event) => setSchedule(event.target.value)} />
+          <Input type="datetime-local" onChange={(event) => setSchedule(event.target.value)} />
         </div>
 
         <div className="grid gap-2">
@@ -429,7 +432,7 @@ const BookHotel = () => {
           <Card className="mt-10 rounded-sm">
             <CardContent>
               <div className="flex items-center justify-between mb-8">
-                <p className="font-title font-bold text-[1.3rem] text-[#183B4E]">Guest Reviews</p>
+                <p className="font-title font-bold text-[1.3rem] text-[#183B4E]">Reviews</p>
 
               </div>
               

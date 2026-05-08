@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
+import { TrendingUp, TrendingDown } from "lucide-react"
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
 
 import {
@@ -34,6 +34,7 @@ const chartConfig = {
 
 function TopCategories({ filter }) {
   const [data, setData] = useState([]);
+  const [delta, setDelta] = useState([]);
   const initiateData = (userData) => {
     const formData = new FormData();
 
@@ -45,12 +46,12 @@ function TopCategories({ filter }) {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const services = filter(data?.services ?? []);
+        const { list } = filter(data?.services ?? []);
         
         const categories = ["Function Hall", "Restaurant", "Independent Provider", "Hotel/Resort"];
 
         const chartServices = categories.map((item) => {
-          const servicesCount = services.filter((servc) => servc.category === item)?.length ?? 0;
+          const servicesCount = list.filter((servc) => servc.category === item)?.length ?? 0;
 
           return { month: item, item_count: servicesCount };
         });

@@ -1,9 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { MessageSquareText, NotebookPen, Users } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { MessageSquareText, NotebookPen, Users, TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const TotalFeedbacks = ({ filter }) => {
+const TotalFeedbacks = ({ selectedFilter, filter }) => {
   const [total, setTotal] = useState(0);
+  const [delta, setDelta] = useState();
   const initiateData = (userData) => {
     const formData = new FormData();
 
@@ -15,9 +16,10 @@ const TotalFeedbacks = ({ filter }) => {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        const feedbacks = filter(data?.feedbacks ?? []);
+        const { list, delta } = filter(data?.feedbacks ?? []);
 
-        setTotal(feedbacks.length);
+        setTotal(list.length);
+        setDelta(delta);
       })
   }
 
@@ -32,9 +34,9 @@ const TotalFeedbacks = ({ filter }) => {
     initiateData(parsedData);
   }, [filter]);
   return (
-    <Card className="py-0">
+    <Card className="py-0 gap-0">
       <CardContent className="px-0">
-        <div className="py-4 px-6 flex justify-between">
+        <div className="py-4 px-6 pb-2 flex justify-between">
           <div className="grid gap-3">
             <div>
               <MessageSquareText />
@@ -50,6 +52,13 @@ const TotalFeedbacks = ({ filter }) => {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="flex-col items-start pb-4 gap-2 text-sm">
+        {typeof delta === "number" && (
+          <div className="flex gap-2 leading-none font-medium">
+            Trending {delta >= 0 ? "up" : "down"} by {delta.toFixed(2)}% {selectedFilter.replace("_", " ")} {delta >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+          </div>
+        )}
+      </CardFooter>
     </Card>
   )
 };

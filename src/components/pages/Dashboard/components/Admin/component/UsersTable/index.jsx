@@ -26,6 +26,32 @@ import { Ellipsis } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+function timeAgo(timestamp) {
+  const now = new Date();
+  const past = new Date(timestamp);
+
+  past.setHours(past.getHours() + 8);
+  const seconds = Math.floor((now - past) / 1000);
+
+  const intervals = [
+    { label: "year", seconds: 31536000 },
+    { label: "month", seconds: 2592000 },
+    { label: "day", seconds: 86400 },
+    { label: "hour", seconds: 3600 },
+    { label: "minute", seconds: 60 },
+    { label: "second", seconds: 1 },
+  ];
+
+  for (const interval of intervals) {
+    const count = Math.floor(seconds / interval.seconds);
+    if (count >= 1) {
+      return `${count} ${interval.label}${count > 1 ? "s" : ""} ago`;
+    }
+  }
+
+  return "just now";
+}
+
 const UsersTable = ({ searchFilter, setSelectedUser }) => {
   const [usersList, setUsersList] = useState([]);
 
@@ -86,7 +112,7 @@ const UsersTable = ({ searchFilter, setSelectedUser }) => {
 
     formData.append("id", user.id);
     formData.append("email", user.email);
-    formData.append("status", "Blocked");
+    formData.append("status", "Deactivated");
     formData.append("userId", parsedData.id);
 
     fetch(`${import.meta.env.VITE_API_URL}/users/block.php`, {
@@ -94,7 +120,7 @@ const UsersTable = ({ searchFilter, setSelectedUser }) => {
       body: formData
     })
       .then((res) => res.json())
-      .then(updateUser.bind(null, { ...user, status: "Blocked" }))
+      .then(updateUser.bind(null, { ...user, status: "Deactivated" }))
       .catch(handleFetchError);
   };
 
@@ -143,6 +169,7 @@ const UsersTable = ({ searchFilter, setSelectedUser }) => {
               <TableHead className="w-[200px] text-gray-500">Email</TableHead>
               <TableHead className="text-gray-500">Role</TableHead>
               <TableHead className="px-5 py-3 text-gray-500">Status</TableHead>
+              <TableHead className="px-5 py-3 text-gray-500">Last Login</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -181,13 +208,13 @@ const UsersTable = ({ searchFilter, setSelectedUser }) => {
                                 )}
                                 {(user.status === "Active") && (
                                   <CommandItem onSelect={() => handleBlockUser(user)}>
-                                    Block User
+                                    Deactivate User
                                   </CommandItem>
                                 )}
 
-                                {user.status === "Blocked" && (
+                                {user.status === "Deactivated" && (
                                   <CommandItem onSelect={() => handleUnblockUser(user)}>
-                                    Unblock User
+                                    Activate User
                                   </CommandItem>
                                 )}
 
@@ -199,6 +226,9 @@ const UsersTable = ({ searchFilter, setSelectedUser }) => {
                     )}
                   </div>
                 </TableCell>
+
+                
+                <TableCell>{timeAgo(user.last_login)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

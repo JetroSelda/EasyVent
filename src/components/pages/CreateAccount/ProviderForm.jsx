@@ -79,8 +79,21 @@ const ProviderForm = () => {
       });
   }
 
+  function isValidPassword(password) {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+    return regex.test(password);
+  }
+
   const initOTPForm = async (event) => {
     event.preventDefault();
+
+    if (!isValidPassword(password)) {
+      toast.error("Invalid password", {
+        description:
+          "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.",
+      });
+      return;
+    }
 
     if (password !== confirm_password) {
       // Throw Error

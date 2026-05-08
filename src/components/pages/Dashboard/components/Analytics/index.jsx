@@ -48,10 +48,67 @@ const Analytics = () => {
     setUserState(parsedData);
   }, []);
 
+  function getDeltaPercentage(thisMonth = 0, lastMonth = 0) {
+    if (lastMonth === 0) {
+      return thisMonth === 0 ? 0 : 100; // handle edge case
+    }
+
+    const change = thisMonth - lastMonth;
+    return (change / lastMonth) * 100;
+  }
+
+  const getMonth = (data, customStart) => {
+    const startDate = customStart ? new Date(customStart) : new Date();
+    const lastDate = new Date(startDate);
+
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0);
+
+    lastDate.setMonth(lastDate.getMonth() + 1);
+    lastDate.setDate(1);
+    lastDate.setHours(0, 0, 0);
+
+    const start = startDate.getTime();
+    const last = lastDate.getTime();
+
+    const filteredData = data.filter((item) => {
+      const dataTimestamp = (new Date(item.created_at)).getTime();
+
+      return dataTimestamp >= start && dataTimestamp < last;
+    });
+
+    return filteredData;
+  }
+
+  const getByYear = (data, customStart) => {
+    const startDate = customStart ? new Date(customStart) : new Date();
+    const lastDate = new Date(startDate);
+
+    startDate.setMonth(0);
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0);
+
+    lastDate.setFullYear(lastDate.getFullYear() + 1);
+    lastDate.setMonth(0);
+    lastDate.setDate(1);
+    lastDate.setHours(0, 0, 0);
+
+    const start = startDate.getTime();
+    const last = lastDate.getTime();
+
+    const filteredData = data.filter((item) => {
+      const dataTimestamp = (new Date(item.created_at)).getTime();
+
+      return dataTimestamp >= start && dataTimestamp < last;
+    });
+
+    return filteredData;
+  }
+
   const handleFilter = (selectedFilter, data) => {
     if (!Array.isArray(data) || data.length === 0) return [];
 
-    if (!selectedFilter || selectedFilter === "all") return data;
+    if (!selectedFilter || selectedFilter === "all") return { list: data };
 
     const startDate = new Date();
     const lastDate = new Date();
@@ -59,43 +116,40 @@ const Analytics = () => {
     let last;
 
     if (selectedFilter === "this_month") {
-      startDate.setDate(1);
-      startDate.setHours(0, 0, 0);
+      const currMonthData = getMonth(data);
+      startDate.setMonth(startDate.getMonth() - 1);
+      const lastMonthData = getMonth(data, startDate);
 
-      lastDate.setMonth(lastDate.getMonth() + 1);
-      lastDate.setDate(1);
-      lastDate.setHours(0, 0, 0);
+      return { list: currMonthData, delta: getDeltaPercentage(currMonthData?.length, lastMonthData?.length) };
     }
 
     if (selectedFilter === "last_month") {
       startDate.setMonth(startDate.getMonth() - 1);
-      startDate.setDate(1);
-      startDate.setHours(0, 0 , 0);
+      const currMonthData = getMonth(data, startDate);
 
-      lastDate.setDate(1);
-      lastDate.setHours(0, 0, 0);
+      lastDate.setMonth(lastDate.setMonth() - 2);
+      const lastMonthData = getMonth(data, lastDate);
+
+      return { list: currMonthData, delta: getDeltaPercentage(currMonthData?.length, lastMonthData?.length) };
     }
 
     if (selectedFilter === "this_year") {
-      startDate.setMonth(0);
-      startDate.setDate(1);
-      startDate.setHours(0, 0, 0);
+      const currYearData = getByYear(data);
 
-      lastDate.setFullYear(lastDate.getFullYear() + 1);
-      lastDate.setMonth(0);
-      lastDate.setDate(1);
-      lastDate.setHours(0, 0, 0);
+      startDate.setFullYear(startDate.getFullYear() - 1);
+      const lastYearData = getByYear(data, startDate);
+
+      return { list: currYearData, delta: getDeltaPercentage(currYearData?.length, lastYearData?.length) };
     }
 
     if (selectedFilter === "last_year") {
       startDate.setFullYear(startDate.getFullYear() - 1);
-      startDate.setMonth(0);
-      startDate.setDate(1);
-      startDate.setHours(0, 0, 0);
-      
-      lastDate.setMonth(0);
-      lastDate.setDate(1);
-      lastDate.setHours(0, 0, 0);
+      const currYearData = getByYear(data, startDate);
+
+      lastDate.setFullYear(lastDate.getFullYear() - 2);
+      const lastYearData = getByYear(data, lastDate);
+
+      return { list: currYearData, delta: getDeltaPercentage(currYearData?.length, lastYearData?.length) };
     }
 
     start = startDate.getTime();
@@ -160,19 +214,19 @@ const Analytics = () => {
           <>
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
               <div className="rounded-xl">
-                <TotalServicesAdmin filter={(data) => handleFilter(filter, data)} />
+                <TotalServicesAdmin selectedFilter={filter} filter={(data) => handleFilter(filter, data)} />
               </div>
               <div className="rounded-xl">
-                <TotalBookingsAdmin filter={(data) => handleFilter(filter, data)} />
+                <TotalBookingsAdmin selectedFilter={filter} filter={(data) => handleFilter(filter, data)} />
               </div>
               <div className="rounded-xl">
-                <TotalProviders filter={(data) => handleFilter(filter, data)} />
+                <TotalProviders selectedFilter={filter} filter={(data) => handleFilter(filter, data)} />
               </div>
               <div className="rounded-xl">
-                <TotalCustomers filter={(data) => handleFilter(filter, data)} />
+                <TotalCustomers selectedFilter={filter} filter={(data) => handleFilter(filter, data)} />
               </div>
               <div className="rounded-xl">
-                <TotalFeedbacks filter={(data) => handleFilter(filter, data)} />
+                <TotalFeedbacks selectedFilter={filter} filter={(data) => handleFilter(filter, data)} />
               </div>
             </div>
             

@@ -58,7 +58,8 @@ function TopServices({ filter }) {
     })
       .then((res) => res.json())
       .then(({ data }) => {
-        setBookings(filter(data?.bookings ?? []));
+        const { list } = filter(data?.bookings ?? []);
+        setBookings(list);
       })
   }
 

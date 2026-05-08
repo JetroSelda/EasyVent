@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { CircleAlert, CirclePlus, Download, Ellipsis, Trash, Upload } from "lucide-react";
+import { CircleAlert, CirclePlus, Download, Ellipsis, KeyRound, Trash, Upload, UserLock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -98,6 +98,111 @@ const PaymentForm = ({ payment, onSubmit }) => {
           <Label>Account Number</Label>
           <Input value={account_number} onChange={(event) => handleChange(event.target.value, "account_number")} required />
         </div>
+      </div>
+      <DialogFooter>
+        <Button type="submit" className="bg-[#183B4E] hover:bg-[#2e5e78]">Save Payment</Button>
+      </DialogFooter>
+    </form>
+  )
+}
+
+const PasswordForm = ({ id, onSubmit }) => {
+  const [formState, setFormState] = useState({});
+
+  const { curr_password, new_password, re_password } = formState;
+
+  const handleChange = (value, fieldName) => {
+    setFormState((prev) => ({ ...prev, [fieldName]: value }));
+  };
+
+  function isValidPassword(password) {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+    return regex.test(password);
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!isValidPassword(new_password)) {
+      toast.error("Invalid password", {
+        description:
+          "Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.",
+      });
+      return;
+    }
+
+    if (new_password !== re_password) {
+      toast.error("Validation Error", {
+        description: "Password did not match.",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("old_password", curr_password);
+    formData.append("new_password", new_password);
+    formData.append("id", id)
+
+    fetch(`${import.meta.env.VITE_API_URL}/users/updatePassProfile.php`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error(error.title, {
+            description: error.message
+          });
+          return;
+        }
+        if (data) {
+          onSubmit();
+        }
+      })
+
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <DialogHeader>
+        <DialogTitle>Change Password</DialogTitle>
+        <DialogDescription>
+          Please fill in your account details to change your password
+        </DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-3 py-4">
+        <div className="grid gap-2">
+          <Label>Current Password</Label>
+          <Input
+            type="password"
+            value={curr_password}
+            onChange={(event) => handleChange(event.target.value, "curr_password")}
+            required
+          />
+        </div>
+        
+        <div className="grid gap-2">
+          <Label>New Password</Label>
+          <Input
+            type="password"
+            value={new_password}
+            onChange={(event) => handleChange(event.target.value, "new_password")}
+            required
+          />
+        </div>
+        
+        <div className="grid gap-2">
+          <Label>Confirm Password</Label>
+          <Input
+            type="password"
+            value={re_password}
+            onChange={(event) => handleChange(event.target.value, "re_password")}
+            required
+          />
+        </div>
+
       </div>
       <DialogFooter>
         <Button type="submit" className="bg-[#183B4E] hover:bg-[#2e5e78]">Save Payment</Button>
@@ -222,6 +327,7 @@ const PaymentsForm = ({ payments = [], onChange }) => {
 
 const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, onSubmit, isLoading, downloadTransaction }) => {
   const [profileState, setProfileState] = useState(defaultValues);
+  const [activeChangePass, setActiveChangePass] = useState(false);
   const navigate = useNavigate();
 
   const fileRef = useRef();
@@ -346,6 +452,7 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
                   </Label>
                 </div>
               )}
+
             </div>
           </div>
 
@@ -383,6 +490,16 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
               />
             </div>
           </div>
+
+          {!isCreating && (
+            <div className="flex flex-col md:flex-row mb-[1.5rem] md:items-center">
+              <div className="md:w-[25%]">Password</div>
+
+              <div className="md:w-[75%] flex items-center gap-[1rem]">
+                <Button onClick={() => setActiveChangePass(true)} type="button" variant="outline">Change Password <UserLock /></Button>
+              </div>
+            </div>
+          )}
 
           <div className="flex flex-col md:flex-row mb-[1.5rem]">
             <div className="md:w-[25%] pt-[0.5rem]">Contacts</div>
@@ -454,6 +571,14 @@ const ProfileForm = ({ isProvider, isCustomer, isCreating, defaultValues = {}, o
           </div>
         </form>
       </CardContent>
+
+      <Dialog open={!!activeChangePass} onOpenChange={setActiveChangePass}>
+        <DialogContent className="sm:max-w-[355px] max-h-[85vh] overflow-auto">
+          {!!activeChangePass && (
+            <PasswordForm id={profileState.id} onSubmit={() => setActiveChangePass(false)} />
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 };

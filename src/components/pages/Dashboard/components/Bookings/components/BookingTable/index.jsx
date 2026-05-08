@@ -538,7 +538,7 @@ const BookingTable = ({ bookingList = [], refresh }) => {
               <TableHead className="w-[200px] text-gray-500">Service</TableHead>
               <TableHead className="text-gray-500">Package</TableHead>
               <TableHead className="text-gray-500">Price</TableHead>
-              <TableHead className="text-gray-500">Date</TableHead>
+              <TableHead className="text-gray-500">Date/Time</TableHead>
               <TableHead className="px-5 py-3 text-gray-500">Status</TableHead>
             </TableRow>
           </TableHeader>

@@ -45,12 +45,34 @@ export const debounce = (func, delay = 1000) => {
   };
 }
 
+export const formatMilitaryTime = (hours, minutes) => {
+  // Return empty string if both are 0
+  if (hours === 0 && minutes === 0) {
+    return "";
+  }
+
+  const period = hours >= 12 ? "PM" : "AM";
+
+  // Convert 24-hour format to 12-hour format
+  let formattedHours = hours % 12;
+  if (formattedHours === 0) {
+    formattedHours = 12;
+  }
+
+  // Ensure minutes are always 2 digits
+  const formattedMinutes = String(minutes).padStart(2, "0");
+
+  return `${String(formattedHours).padStart(2, "0")}:${formattedMinutes} ${period}`;
+}
+
 export const formatDate = (date) => {
   if (!date) return "";
 
   const currDate = date instanceof Date ? date : new Date(date);
 
-  return `${months[currDate.getMonth()]} ${currDate.getDate()}, ${currDate.getFullYear()}`;
+  const time = formatMilitaryTime(currDate.getHours(), currDate.getMinutes())
+
+  return `${months[currDate.getMonth()]} ${currDate.getDate()}, ${currDate.getFullYear()} ${time}`;
 }
 
 export const formatISODate = (date) => {

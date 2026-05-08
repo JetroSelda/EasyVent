@@ -51,8 +51,10 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
 
   const submitBooking = async () => {
     const serviceUnvDates = serviceState?.availability ?? [];
+    const [date] = schedule.split("T");
+    const formattedSched = `${schedule.split("T").join(" ")}:00`;
 
-    if (serviceUnvDates.some((dateItem) => dateItem === schedule)) {
+    if (serviceUnvDates.some((dateItem) => dateItem === date)) {
       return toast("Validation Error", { description: "The selected schedule is not available" });
     }
 
@@ -69,7 +71,7 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
     const { bookings = [] } = data ?? {};
 
     if (bookings?.length) {
-      if (bookings.some((dateItem) => dateItem.schedule === schedule)) {
+      if (bookings.some((dateItem) => dateItem.schedule === formattedSched)) {
         return toast("Validation Error", { description: "The selected schedule is not available" });
       }
     }
@@ -83,7 +85,7 @@ const PackagesSelection = ({ serviceState, serviceId, packages_list = [] }) => {
     formData.append("userId", parsedUserData.id);
     formData.append("serviceId", serviceId);
     formData.append("packageItem", JSON.stringify(selectedPackage));
-    formData.append("schedule", schedule);
+    formData.append("schedule", formattedSched);
 
     fetch(`${import.meta.env.VITE_API_URL}/booking/create.php`, {
       method: "POST",
